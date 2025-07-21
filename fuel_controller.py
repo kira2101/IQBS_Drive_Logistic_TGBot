@@ -163,14 +163,14 @@ class FuelController:
         
         if current_fuel <= critical_threshold_liters:
             status["level"] = "critical"
-            status["message"] = f"🔴 КРИТИЧЕСКИЙ уровень топлива: {current_fuel:.1f}L ({fuel_percentage:.0f}%)"
+            status["message"] = f"🔴 КРИТИЧЕСКИЙ уровень топлива в {vehicle_name}: {current_fuel:.1f}L ({fuel_percentage:.0f}%)"
             status["action_required"] = "Немедленная заправка!"
         elif current_fuel <= low_threshold_liters:
             status["level"] = "low"
-            status["message"] = f"🟡 Низкий уровень топлива: {current_fuel:.1f}L ({fuel_percentage:.0f}%)"
+            status["message"] = f"🟡 Низкий уровень топлива в {vehicle_name}: {current_fuel:.1f}L ({fuel_percentage:.0f}%)"
             status["action_required"] = "Рекомендуется заправка"
         else:
-            status["message"] = f"🟢 Нормальный уровень топлива: {current_fuel:.1f}L ({fuel_percentage:.0f}%)"
+            status["message"] = f"🟢 Нормальный уровень топлива в {vehicle_name}: {current_fuel:.1f}L ({fuel_percentage:.0f}%)"
         
         return status
     

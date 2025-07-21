@@ -74,6 +74,28 @@ class Settings:
             },
             "general": {
                 "default_fuel_efficiency_tolerance": 1.2  # 20% tolerance for fuel consumption
+            },
+            "crm_filters": {
+                "target_status_names": ["В роботі", "Срочный ремонт", "Реконструкция"],
+                "target_status_id": 2974853,
+                "enable_status_name_filter": True,
+                "enable_status_id_filter": True
+            },
+            "cache_settings": {
+                "daily_objects_ttl_hours": 4,
+                "all_objects_ttl_hours": 2,
+                "enable_cache_warnings": True,
+                "cache_warning_age_hours": 2,
+                "auto_refresh_on_stale": False,
+                "max_cache_entries_per_user": 10
+            },
+            "cache_settings": {
+                "daily_objects_ttl_hours": 4,
+                "all_objects_ttl_hours": 2,
+                "enable_cache_warnings": True,
+                "cache_warning_age_hours": 2,
+                "auto_refresh_on_stale": False,
+                "max_cache_entries_per_user": 10
             }
         }
         
@@ -163,6 +185,54 @@ class Settings:
         threshold_percent = self.get_low_fuel_threshold_percent()
         return (tank_capacity * threshold_percent) / 100
     
+    def get_crm_filters(self) -> Dict:
+        """Get CRM filtering configuration"""
+        return self._settings.get("crm_filters", {})
+    
+    def get_target_status_names(self) -> List[str]:
+        """Get list of target status names for CRM filtering"""
+        return self.get_crm_filters().get("target_status_names", ["В роботі", "Срочный ремонт", "Реконструкция"])
+    
+    def get_target_status_id(self) -> int:
+        """Get target status ID for CRM filtering"""
+        return self.get_crm_filters().get("target_status_id", 2974853)
+    
+    def is_status_name_filter_enabled(self) -> bool:
+        """Check if status name filtering is enabled"""
+        return self.get_crm_filters().get("enable_status_name_filter", True)
+    
+    def is_status_id_filter_enabled(self) -> bool:
+        """Check if status ID filtering is enabled"""
+        return self.get_crm_filters().get("enable_status_id_filter", True)
+    
+    def get_cache_settings(self) -> Dict:
+        """Get cache configuration"""
+        return self._settings.get("cache_settings", {})
+    
+    def get_daily_objects_ttl_hours(self) -> int:
+        """Get TTL for daily objects cache in hours"""
+        return self.get_cache_settings().get("daily_objects_ttl_hours", 4)
+    
+    def get_all_objects_ttl_hours(self) -> int:
+        """Get TTL for all objects cache in hours"""
+        return self.get_cache_settings().get("all_objects_ttl_hours", 2)
+    
+    def is_cache_warnings_enabled(self) -> bool:
+        """Check if cache warnings are enabled"""
+        return self.get_cache_settings().get("enable_cache_warnings", True)
+    
+    def get_cache_warning_age_hours(self) -> int:
+        """Get cache warning age threshold in hours"""
+        return self.get_cache_settings().get("cache_warning_age_hours", 2)
+    
+    def is_auto_refresh_on_stale_enabled(self) -> bool:
+        """Check if automatic refresh on stale cache is enabled"""
+        return self.get_cache_settings().get("auto_refresh_on_stale", False)
+    
+    def get_max_cache_entries_per_user(self) -> int:
+        """Get maximum cache entries per user"""
+        return self.get_cache_settings().get("max_cache_entries_per_user", 10)
+
     def reload_settings(self):
         """Reload settings from file"""
         self.load_settings()

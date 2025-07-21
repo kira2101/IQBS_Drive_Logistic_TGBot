@@ -3,18 +3,18 @@
     "Skoda Octavia 1.6": {
       "fuel_consumption_per_100km": 12,
       "tank_capacity": 55.0,
-      "current_fuel_level": 31.625000000000007,
-      "total_fuel_cost_in_tank": 1581.25,
+      "current_fuel_level": 14.185000000000006,
+      "total_fuel_cost_in_tank": 709.2500000000005,
       "current_mileage": 150000,
-      "last_updated": "2025-07-21T16:23:17.999616"
+      "last_updated": "2025-07-22T00:17:19.943887"
     },
     "Fiat Ducato 2.3D": {
       "fuel_consumption_per_100km": 10,
       "tank_capacity": 90.0,
-      "current_fuel_level": 40.0,
-      "total_fuel_cost_in_tank": 2000.0,
+      "current_fuel_level": 14.5,
+      "total_fuel_cost_in_tank": 725.0,
       "current_mileage": 89000,
-      "last_updated": "2025-07-21T15:55:06.507101"
+      "last_updated": "2025-07-21T18:50:30.237903"
     },
     "Honda Civic 1.4}": {
       "fuel_consumption_per_100km": 8.5,
@@ -38,5 +38,27 @@
   },
   "general": {
     "default_fuel_efficiency_tolerance": 1.1
+  },
+  "crm_filters": {
+    "target_status_names": [
+      "В роботі",
+      "Підготовка",
+      "Реконструкцыя",
+      "Терміновий виклик",
+      "Сервіс",
+      "Доставка",
+      "Закупка"
+    ],
+    "target_status_id": 2974853,
+    "enable_status_name_filter": true,
+    "enable_status_id_filter": true
+  },
+  "cache_settings": {
+    "daily_objects_ttl_hours": 4,
+    "all_objects_ttl_hours": 2,
+    "enable_cache_warnings": true,
+    "cache_warning_age_hours": 2,
+    "auto_refresh_on_stale": false,
+    "max_cache_entries_per_user": 10
   }
 }

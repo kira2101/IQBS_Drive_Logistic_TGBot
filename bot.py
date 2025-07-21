@@ -46,8 +46,19 @@ async def start_day(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         # Start working day
         working_day = state_manager.start_working_day(user.id)
+        
+        # Pre-cache CRM data for the day to optimize performance
+        from crm_cache_manager import get_cache_manager
+        cache_manager = get_cache_manager(db)
+        user_db_id = state_manager._get_user_id(user.id)
+        
+        # Asynchronously cache CRM data (this will be fast on subsequent calls)
+        daily_objects = cache_manager.get_or_fetch_daily_objects(user_db_id)
+        cache_status = "кэш обновлен" if daily_objects else "кэш недоступен"
+        
         await update.message.reply_text(
             f"Рабочий день начат в {working_day.start_time.strftime('%H:%M')}!\n"
+            f"Данные объектов загружены ({cache_status})\n"
             f"Используйте /start_trip для начала рейса."
         )
     
@@ -111,8 +122,15 @@ async def drive_to(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text("Сначала начните рейс с /start_day")
             return
         
-        # Get all objects (static + CRM)
-        all_objects = state_manager.get_all_objects()
+        # Refresh CRM cache and get all objects (static + CRM)
+        from crm_cache_manager import get_cache_manager
+        cache_manager = get_cache_manager(db)
+        user_db_id = state_manager._get_user_id(user.id)
+        
+        # Auto-refresh cache after drive_to command
+        cache_manager.invalidate_cache(user_db_id)
+        
+        all_objects, _ = state_manager.get_all_objects(telegram_id=user.id)
         
         # Create keyboard with destinations
         keyboard = []
@@ -182,8 +200,33 @@ async def shop_for(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text("Закупка уже начата. Закончите текущую закупку командой /end_activity или продолжите работу.")
             return
         
+        # Refresh CRM cache and get all objects (static + CRM)
+        from crm_cache_manager import get_cache_manager
+        cache_manager = get_cache_manager(db)
+        user_db_id = state_manager._get_user_id(user.id)
+        
+        # Auto-refresh cache after shop_for command
+        cache_manager.invalidate_cache(user_db_id)
+        
+        # Post departure comment if currently at a CRM object
+        current_location = state_manager.get_user_location(user.id)
+        if current_location.get('crm_object_id'):
+            from crm_comment_manager import get_comment_manager
+            comment_manager = get_comment_manager()
+            
+            # Get user name (try first_name, fallback to username)
+            user_name = user.first_name or user.username or f"User {user.id}"
+            
+            crm_object_id = current_location['crm_object_id']
+            success = comment_manager.post_departure_comment(crm_object_id, user_name)
+            
+            if success:
+                logger.info(f"Posted departure comment for user {user_name} from CRM order {crm_object_id} (shop_for)")
+            else:
+                logger.warning(f"Failed to post departure comment for user {user_name} from CRM order {crm_object_id} (shop_for)")
+        
         # Get all objects (static + CRM)
-        all_objects = state_manager.get_all_objects()
+        all_objects, _ = state_manager.get_all_objects(telegram_id=user.id)
         
         keyboard = []
         for obj in all_objects:
@@ -240,7 +283,7 @@ async def work_on(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 return
         
         # If no last destination found or it's Магазин, show object selection
-        all_objects = state_manager.get_all_objects()
+        all_objects, _ = state_manager.get_all_objects(telegram_id=user.id)
         
         keyboard = []
         for obj in all_objects:
@@ -363,7 +406,32 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 if obj_id.isdigit():
                     project_id = int(obj_id)
             
-            state_manager.start_trip(user.id, destination, project_id)
+            # Check current location for departure comment
+            current_location = state_manager.get_user_location(user.id)
+            start_location = current_location.get('location_name', '')
+            
+            # Post departure comment if leaving a CRM object
+            if current_location.get('crm_object_id'):
+                from crm_comment_manager import get_comment_manager
+                comment_manager = get_comment_manager()
+                
+                # Get user name (try first_name, fallback to username)
+                user_name = user.first_name or user.username or f"User {user.id}"
+                
+                crm_object_id = current_location['crm_object_id']
+                success = comment_manager.post_departure_comment(crm_object_id, user_name)
+                
+                if success:
+                    logger.info(f"Posted departure comment for user {user_name} from CRM order {crm_object_id}")
+                else:
+                    logger.warning(f"Failed to post departure comment for user {user_name} from CRM order {crm_object_id}")
+            
+            # Store CRM object ID if this is a CRM object
+            extra_data = {}
+            if obj_type == 'crm':
+                extra_data['crm_object_id'] = obj_id
+                
+            state_manager.start_trip(user.id, destination, project_id, extra_data, start_location)
             await query.edit_message_text(
                 f"Поездка к {destination} начата.\n\nИспользуйте /arrive когда прибудете."
             )
@@ -381,7 +449,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             state_manager.set_user_state(user.id, 'selecting_shop_projects', {'selected': selected})
             
             # Update keyboard to show selected items
-            all_objects = state_manager.get_all_objects()
+            all_objects, _ = state_manager.get_all_objects(telegram_id=user.id)
             keyboard = []
             
             for obj in all_objects:
@@ -472,7 +540,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             state_manager.set_user_state(user.id, 'selecting_idle_projects', {'selected': selected})
             
             # Update keyboard to show selected items
-            all_objects = state_manager.get_all_objects()
+            all_objects, _ = state_manager.get_all_objects(telegram_id=user.id)
             keyboard = []
             
             for obj in all_objects:
@@ -521,12 +589,14 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             # User accepted a similarity suggestion - ask for confirmation
             crm_object_id = data.split(':')[1]
             
-            # Get CRM object details
-            from crm_remonline import get_crm_client
-            crm_client = get_crm_client()
+            # Get CRM object details from cache
+            from crm_cache_manager import get_cache_manager
+            cache_manager = get_cache_manager(db)
+            user_db_id = state_manager._get_user_id(user.id)
             
-            if crm_client:
-                all_crm_objects = crm_client.get_all_objects_without_filters()
+            all_crm_objects = cache_manager.get_or_fetch_all_objects(user_db_id)
+            
+            if all_crm_objects:
                 selected_obj = None
                 
                 for obj in all_crm_objects:
@@ -578,12 +648,14 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             # User confirmed trip to CRM object
             crm_object_id = data.split(':')[1]
             
-            # Get CRM object details
-            from crm_remonline import get_crm_client
-            crm_client = get_crm_client()
+            # Get CRM object details from cache
+            from crm_cache_manager import get_cache_manager
+            cache_manager = get_cache_manager(db)
+            user_db_id = state_manager._get_user_id(user.id)
             
-            if crm_client:
-                all_crm_objects = crm_client.get_all_objects_without_filters()
+            all_crm_objects = cache_manager.get_or_fetch_all_objects(user_db_id)
+            
+            if all_crm_objects:
                 selected_obj = None
                 
                 for obj in all_crm_objects:
@@ -840,7 +912,33 @@ async def handle_distance_input(update, db, state_manager, user):
             await update.message.reply_text("Пожалуйста, введите положительное расстояние в км.")
             return
             
+        # Get trip state data before ending trip to access CRM object ID
+        trip_state_data = state_manager.get_user_state_data(user.id)
+        
         trip = state_manager.end_trip(user.id, distance)
+        
+        # Post arrival comment if this was a CRM object
+        if trip_state_data and trip_state_data.get('crm_object_id'):
+            from crm_comment_manager import get_comment_manager
+            comment_manager = get_comment_manager()
+            
+            # Get user name (try first_name, fallback to username)
+            user_name = user.first_name or user.username or f"User {user.id}"
+            
+            crm_object_id = trip_state_data['crm_object_id']
+            success = comment_manager.post_arrival_comment(crm_object_id, user_name, trip.end_time)
+            
+            if success:
+                logger.info(f"Posted arrival comment for user {user_name} to CRM order {crm_object_id}")
+            else:
+                logger.warning(f"Failed to post arrival comment for user {user_name} to CRM order {crm_object_id}")
+            
+            # Set user's current location for future departure comments
+            state_manager.set_user_location(user.id, trip.end_location, crm_object_id)
+        
+        # Set current location even for non-CRM objects (static objects)
+        elif trip.end_location:
+            state_manager.set_user_location(user.id, trip.end_location)
         
         # Update fuel consumption using advanced algorithm
         work_day = state_manager.get_active_work_day(user.id)
@@ -998,17 +1096,18 @@ async def handle_manual_destination_input(update, db, state_manager, user):
             await update.message.reply_text("Пожалуйста, введите название объекта.")
             return
         
-        # Get all CRM objects without filters for similarity matching
-        from crm_remonline import get_crm_client
-        crm_client = get_crm_client()
+        # Get all CRM objects for similarity matching using cache
+        from crm_cache_manager import get_cache_manager
+        cache_manager = get_cache_manager(db)
+        user_db_id = state_manager._get_user_id(user.id)
         
-        if not crm_client:
+        # Try to get all objects from cache first
+        all_crm_objects = cache_manager.get_or_fetch_all_objects(user_db_id)
+        
+        if not all_crm_objects:
             # No CRM available, accept user input directly
             await _accept_manual_destination(update, db, state_manager, user, user_input)
             return
-            
-        # Get all CRM objects for similarity matching
-        all_crm_objects = crm_client.get_all_objects_without_filters()
         
         # Find similar objects using fuzzy matching (no exact matching)
         similar_objects = _find_similar_objects(user_input, all_crm_objects)
@@ -1390,6 +1489,10 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Show help message"""
+    user_id = update.effective_user.id
+    settings = get_settings()
+    is_admin = user_id in settings.get_admin_users()
+    
     help_text = """
     Доступные команды:
     
@@ -1406,6 +1509,10 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     /end_idle_time - Закончить простой
     /fuel_status - Показать статус топлива
     /help - Показать это сообщение
+    """
+    
+    if is_admin:
+        help_text += """
     """
     
     await update.message.reply_text(help_text)
@@ -1426,6 +1533,7 @@ async def fuel_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
     except Exception as e:
         await update.message.reply_text(f"Ошибка при получении статуса топлива: {str(e)}")
+
 
 def main():
     """Start the bot"""

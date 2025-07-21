@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, Boolean, Text
+from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, Boolean, Text, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from datetime import datetime
@@ -144,3 +144,14 @@ class WorkingDay(Base):
     user = relationship("User", back_populates="working_days")
 
 User.working_days = relationship("WorkingDay", back_populates="user")
+
+class CRMCache(Base):
+    __tablename__ = 'crm_cache'
+    
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, nullable=False, index=True)
+    cache_type = Column(String(50), nullable=False, default='daily')  # 'daily', 'all_objects'
+    cache_data = Column(JSON, nullable=False)  # Stored as JSON
+    created_at = Column(DateTime, default=datetime.utcnow)
+    expires_at = Column(DateTime, nullable=False)
+    last_updated = Column(DateTime, default=datetime.utcnow)

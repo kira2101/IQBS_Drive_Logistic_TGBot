@@ -81,10 +81,15 @@ class RemonlineCRM:
                 logger.error(f"Orders data is not a list: {type(orders_list)}")
                 return []
             
-            # Filter objects by status
+            # Filter objects by status using settings
+            from settings import get_settings
+            settings = get_settings()
+            
             active_objects = []
-            target_statuses = ["В роботі", "Срочный ремонт", "Реконструкция"]
-            target_status_id = 2974853
+            target_statuses = settings.get_target_status_names()
+            target_status_id = settings.get_target_status_id()
+            status_name_filter_enabled = settings.is_status_name_filter_enabled()
+            status_id_filter_enabled = settings.is_status_id_filter_enabled()
             
             # Debug: log all unique statuses found
             found_statuses = set()
@@ -107,9 +112,15 @@ class RemonlineCRM:
                 if len(active_objects) == 0 and len(found_statuses) <= 3:
                     logger.info(f"Sample order: ID={order.get('id')}, status_name='{status_name}', status_id={status_id}, client_name='{client_name}'")
                 
-                # Check if object meets criteria
-                if (status_id == target_status_id or 
-                    status_name in target_statuses):
+                # Check if object meets criteria based on settings
+                status_match = False
+                
+                if status_id_filter_enabled and status_id == target_status_id:
+                    status_match = True
+                elif status_name_filter_enabled and status_name in target_statuses:
+                    status_match = True
+                
+                if status_match:
                     
                     order_id = order.get('id')
                     id_label = order.get('id_label', '')

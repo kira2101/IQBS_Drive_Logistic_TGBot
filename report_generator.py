@@ -5,6 +5,8 @@ from typing import Dict, List, Tuple
 from sqlalchemy.orm import Session
 from models import WorkDay, Activity, Trip, ShoppingSession, Project, IdleTime
 from crm_remonline import get_crm_client
+from fuel_controller import get_fuel_controller
+from crm_cache_manager import get_cache_manager
 
 class ReportGenerator:
     def __init__(self, db: Session):
@@ -21,6 +23,9 @@ class ReportGenerator:
         
         # Calculate totals per project
         project_totals = self._calculate_project_totals(activities, trips, shopping_sessions, idle_times)
+        
+        # Calculate fuel consumption for this trip
+        fuel_data = self._calculate_trip_fuel_consumption(work_day, trips)
         
         # Generate report
         report = f"*Отчет за {work_day.date.strftime('%d.%m.%Y')}*\n"
@@ -65,6 +70,12 @@ class ReportGenerator:
         report += f"Общее время: {self._format_minutes(actual_work_time)}\n"
         report += f"Общее расстояние: {actual_total_distance:.1f} км\n"
         
+        # Add fuel consumption information
+        if fuel_data and fuel_data.get('fuel_consumed_liters', 0) > 0:
+            report += f"\n*Расход топлива:*\n"
+            report += f"Потрачено топлива: {fuel_data['fuel_consumed_liters']:.1f} л\n"
+            report += f"Стоимость топлива: {fuel_data['trip_fuel_cost']:.2f} грн\n"
+            report += f"Остаток топлива: {fuel_data['fuel_after_liters']:.1f} л\n"
         
         return report
     
@@ -139,6 +150,103 @@ class ReportGenerator:
                     trip_time_range = f"{trip.start_time.strftime('%H:%M')}-{trip.end_time.strftime('%H:%M')}" if trip.end_time else f"{trip.start_time.strftime('%H:%M')}-"
                     project_totals[project_id]['activities'].append(
                         f"Поездка до магазина (доля): {trip_time_range} ({self._format_minutes(time_per_project)}, {distance_per_project:.1f} км)"
+                    )
+        
+        # Handle trips to home and warehouse - distribute among active projects
+        home_warehouse_trips = [t for t in trips if not t.project_id and 
+                               (('Дом' in (t.end_location or '')) or ('Склад' in (t.end_location or '')))]
+        
+        for trip in home_warehouse_trips:
+            # Get all active projects for this work day (projects with activities, trips, or shopping)
+            active_projects = set()
+            
+            # Add projects from activities
+            for activity in activities:
+                if activity.project_id:
+                    active_projects.add(activity.project_id)
+            
+            # Add projects from trips (excluding static object trips)
+            for t in trips:
+                if t.project_id:
+                    active_projects.add(t.project_id)
+            
+            # Add projects from shopping sessions
+            for session in shopping_sessions:
+                if session.projects_data:
+                    project_ids = json.loads(session.projects_data)
+                    active_projects.update(project_ids)
+            
+            if active_projects:
+                # Distribute trip time and distance equally among active projects
+                time_per_project = trip.duration_minutes / len(active_projects)
+                distance_per_project = trip.distance_km / len(active_projects)
+                
+                destination_name = "дома" if 'Дом' in trip.end_location else "склада"
+                
+                for project_id in active_projects:
+                    if project_id not in project_totals:
+                        project_totals[project_id] = {
+                            'time_minutes': 0,
+                            'distance_km': 0.0,
+                            'activities': []
+                        }
+                    
+                    project_totals[project_id]['time_minutes'] += time_per_project
+                    project_totals[project_id]['distance_km'] += distance_per_project
+                    
+                    trip_time_range = f"{trip.start_time.strftime('%H:%M')}-{trip.end_time.strftime('%H:%M')}" if trip.end_time else f"{trip.start_time.strftime('%H:%M')}-"
+                    project_totals[project_id]['activities'].append(
+                        f"Поездка до {destination_name} (доля): {trip_time_range} ({self._format_minutes(time_per_project)}, {distance_per_project:.1f} км)"
+                    )
+        
+        # Handle trips to fuel station - distribute among ALL available projects for the day
+        fuel_station_trips = [t for t in trips if not t.project_id and 'Заправка' in (t.end_location or '')]
+        
+        for trip in fuel_station_trips:
+            # Get ALL available projects for this work day (including idle time projects)
+            all_available_projects = set()
+            
+            # Add projects from activities
+            for activity in activities:
+                if activity.project_id:
+                    all_available_projects.add(activity.project_id)
+            
+            # Add projects from trips (excluding static object trips)
+            for t in trips:
+                if t.project_id:
+                    all_available_projects.add(t.project_id)
+            
+            # Add projects from shopping sessions
+            for session in shopping_sessions:
+                if session.projects_data:
+                    project_ids = json.loads(session.projects_data)
+                    all_available_projects.update(project_ids)
+            
+            # Add projects from idle times
+            for idle_time in idle_times:
+                if idle_time.project_ids:
+                    project_ids = json.loads(idle_time.project_ids)
+                    all_available_projects.update(project_ids)
+            
+            if all_available_projects:
+                # Distribute trip time and distance equally among all available projects
+                time_per_project = trip.duration_minutes / len(all_available_projects)
+                distance_per_project = trip.distance_km / len(all_available_projects)
+                
+                for project_id in all_available_projects:
+                    if project_id not in project_totals:
+                        project_totals[project_id] = {
+                            'time_minutes': 0,
+                            'distance_km': 0.0,
+                            'activities': []
+                        }
+                    
+                    project_totals[project_id]['time_minutes'] += time_per_project
+                    project_totals[project_id]['distance_km'] += distance_per_project
+                    
+                    trip_time_range = f"{trip.start_time.strftime('%H:%M')}-{trip.end_time.strftime('%H:%M')}" if trip.end_time else f"{trip.start_time.strftime('%H:%M')}-"
+                    project_totals[project_id]['activities'].append(
+                        f"Поездка на заправку (доля): {trip_time_range} ({self._format_minutes(time_per_project)}, {distance_per_project:.1f} км)"
                     )
         
         # Add idle times
@@ -256,12 +364,36 @@ class ReportGenerator:
                 project = self.db.query(Project).filter(Project.id == project_id).first()
                 project_name = project.name if project else f"Проект {project_id}"
                 time_str = self._format_minutes(data['time_minutes'])
-                report += f"{project_name}: {time_str}, {data['distance_km']:.1f} км\n"
+                
+                # Calculate total fuel consumption for this project across all vehicles
+                project_total_fuel = 0
+                project_total_cost = 0
+                if data['distance_km'] > 0:
+                    # For simplicity, calculate using first available vehicle from the day
+                    sample_vehicle = None
+                    for work_day in work_days:
+                        if work_day.vehicle:
+                            sample_vehicle = work_day.vehicle
+                            break
+                    
+                    if sample_vehicle:
+                        fuel_controller = get_fuel_controller()
+                        project_total_fuel = fuel_controller.calculate_fuel_consumption(sample_vehicle, data['distance_km'])
+                        average_price = fuel_controller.calculate_average_fuel_price_per_liter(sample_vehicle)
+                        project_total_cost = project_total_fuel * average_price
+                
+                report += f"{project_name}: {time_str}, {data['distance_km']:.1f} км"
+                if project_total_fuel > 0:
+                    report += f", топливо: {project_total_fuel:.1f} л ({project_total_cost:.2f} грн)"
+                report += "\n"
             report += "\n"
         
         # Total idle time
         if total_idle_time > 0:
             report += f"*Общий простой:* {self._format_minutes(total_idle_time)}\n\n"
+        
+        # Calculate total fuel consumption for the day
+        total_fuel_data = self._calculate_day_fuel_consumption(work_days)
         
         # Detailed summary by vehicles
         if vehicle_totals:
@@ -270,6 +402,12 @@ class ReportGenerator:
                 time_str = self._format_minutes(data['time_minutes'])
                 report += f"*{vehicle}:* {data['trips_count']} рейс(ов), {time_str}, {data['distance_km']:.1f} км\n"
                 
+                # Add fuel consumption data for this vehicle
+                if vehicle in total_fuel_data and total_fuel_data[vehicle].get('fuel_consumed_liters', 0) > 0:
+                    fuel_info = total_fuel_data[vehicle]
+                    report += f"  Расход топлива: {fuel_info['fuel_consumed_liters']:.1f} л, стоимость: {fuel_info['total_fuel_cost']:.2f} грн\n"
+                    report += f"  Остаток топлива: {fuel_info['fuel_after_liters']:.1f} л\n"
+                
                 # Show which objects this vehicle worked on
                 if vehicle in vehicle_projects and vehicle_projects[vehicle]:
                     report += f"  Объекты:\n"
@@ -277,13 +415,34 @@ class ReportGenerator:
                         project = self.db.query(Project).filter(Project.id == project_id).first()
                         project_name = project.name if project else f"Проект {project_id}"
                         project_time_str = self._format_minutes(project_data['time_minutes'])
-                        report += f"    • {project_name}: {project_time_str}, {project_data['distance_km']:.1f} км\n"
+                        
+                        # Calculate fuel consumption for this project
+                        project_fuel_consumed = 0
+                        project_fuel_cost = 0
+                        if vehicle in total_fuel_data and project_data['distance_km'] > 0:
+                            fuel_controller = get_fuel_controller()
+                            project_fuel_consumed = fuel_controller.calculate_fuel_consumption(vehicle, project_data['distance_km'])
+                            average_price = fuel_controller.calculate_average_fuel_price_per_liter(vehicle)
+                            project_fuel_cost = project_fuel_consumed * average_price
+                        
+                        report += f"    • {project_name}: {project_time_str}, {project_data['distance_km']:.1f} км"
+                        if project_fuel_consumed > 0:
+                            report += f", топливо: {project_fuel_consumed:.1f} л ({project_fuel_cost:.2f} грн)"
+                        report += "\n"
                 report += "\n"
         
         # Overall totals
         report += f"*Итого за день:*\n"
         report += f"Общее время: {self._format_minutes(total_time)}\n"
         report += f"Общее расстояние: {total_distance:.1f} км\n"
+        
+        # Add daily fuel consumption summary
+        if total_fuel_data:
+            report += f"\n*Расход топлива за день:*\n"
+            for vehicle, fuel_info in total_fuel_data.items():
+                if fuel_info.get('fuel_consumed_liters', 0) > 0:
+                    report += f"{vehicle}: {fuel_info['fuel_consumed_liters']:.1f} л, {fuel_info['total_fuel_cost']:.2f} грн\n"
+                    report += f"  Остаток: {fuel_info['fuel_after_liters']:.1f} л\n"
         
         return report
 
@@ -339,6 +498,9 @@ class ReportGenerator:
                     # Calculate project totals for this trip
                     project_totals = self._calculate_project_totals(activities, trips, shopping_sessions, idle_times)
                     
+                    # Calculate fuel consumption for this trip
+                    trip_fuel_data = self._calculate_trip_fuel_consumption(work_day, trips)
+                    
                     # Prepare trip data with all details
                     trip_data = {
                         "trip_id": work_day.id,
@@ -347,6 +509,7 @@ class ReportGenerator:
                         "end_time": work_day.end_time.isoformat(),
                         "duration_minutes": trip_time,
                         "distance_km": trip_distance,
+                        "fuel_consumption": trip_fuel_data,
                         "project_totals": {},
                         "activities": [],
                         "trips": [],
@@ -354,12 +517,16 @@ class ReportGenerator:
                         "idle_times": []
                     }
                     
+                    # Get bulk CRM metadata for all projects (optimization)
+                    project_ids = list(project_totals.keys())
+                    bulk_crm_metadata = self._get_bulk_crm_metadata_for_projects(project_ids, work_day.user_id)
+                    
                     # Add project totals with names
                     for project_id, data in project_totals.items():
                         project = self.db.query(Project).filter(Project.id == project_id).first()
                         project_name = project.name if project else f"Project {project_id}"
-                        # Get CRM metadata if available
-                        crm_metadata = self._get_crm_metadata_for_project(project)
+                        # Get CRM metadata from bulk fetch
+                        crm_metadata = bulk_crm_metadata.get(project_id, {"source": "static"})
                         
                         trip_data["project_totals"][project_name] = {
                             "project_id": project_id,
@@ -469,13 +636,17 @@ class ReportGenerator:
                     
                     json_data["trips"].append(trip_data)
             
+            # Calculate fuel data for JSON report
+            fuel_data_for_json = self._calculate_day_fuel_consumption(work_days)
+            
             # Add day totals
             json_data["totals"] = {
                 "total_time_minutes": total_time,
                 "total_distance_km": total_distance,
                 "total_idle_time_minutes": total_idle_time,
                 "project_totals": all_project_totals,
-                "vehicle_totals": vehicle_totals
+                "vehicle_totals": vehicle_totals,
+                "fuel_consumption_by_vehicle": fuel_data_for_json
             }
             
             # Save to file
@@ -520,3 +691,81 @@ class ReportGenerator:
                 print(f"Warning: Failed to get CRM metadata: {e}")
         
         return {"source": "static"}
+    
+    def _get_bulk_crm_metadata_for_projects(self, project_ids: List[int], user_id: int) -> Dict[int, Dict]:
+        """Get CRM metadata for multiple projects in a single optimized operation"""
+        try:
+            # Use cache manager for bulk metadata fetching
+            cache_manager = get_cache_manager(self.db)
+            return cache_manager.get_bulk_crm_metadata(user_id, project_ids)
+        except Exception as e:
+            logger.error(f"Error getting bulk CRM metadata: {e}")
+            # Fallback: return static metadata for all projects
+            return {project_id: {"source": "static"} for project_id in project_ids}
+    
+    def _calculate_trip_fuel_consumption(self, work_day: WorkDay, trips: List[Trip]) -> Dict:
+        """Calculate fuel consumption for a single trip"""
+        if not work_day.vehicle or not trips:
+            return {}
+        
+        fuel_controller = get_fuel_controller()
+        total_distance = sum(trip.distance_km for trip in trips if trip.distance_km)
+        
+        if total_distance <= 0:
+            return {}
+        
+        # Calculate expected fuel consumption
+        fuel_consumed_liters = fuel_controller.calculate_fuel_consumption(work_day.vehicle, total_distance)
+        average_price_per_liter = fuel_controller.calculate_average_fuel_price_per_liter(work_day.vehicle)
+        trip_fuel_cost = fuel_consumed_liters * average_price_per_liter
+        
+        # Get current fuel status
+        fuel_status = fuel_controller.check_fuel_status(work_day.vehicle)
+        
+        return {
+            'fuel_consumed_liters': fuel_consumed_liters,
+            'trip_fuel_cost': trip_fuel_cost,
+            'average_price_per_liter': average_price_per_liter,
+            'fuel_after_liters': fuel_status.get('current_fuel_liters', 0),
+            'vehicle': work_day.vehicle
+        }
+    
+    def _calculate_day_fuel_consumption(self, work_days: List[WorkDay]) -> Dict[str, Dict]:
+        """Calculate total fuel consumption per vehicle for all trips in a day"""
+        fuel_controller = get_fuel_controller()
+        vehicle_fuel_data = {}
+        
+        for work_day in work_days:
+            if not work_day.vehicle:
+                continue
+            
+            # Get trips for this work day
+            trips = self.db.query(Trip).filter(Trip.work_day_id == work_day.id).all()
+            total_distance = sum(trip.distance_km for trip in trips if trip.distance_km)
+            
+            if total_distance <= 0:
+                continue
+            
+            vehicle = work_day.vehicle
+            if vehicle not in vehicle_fuel_data:
+                vehicle_fuel_data[vehicle] = {
+                    'fuel_consumed_liters': 0,
+                    'total_fuel_cost': 0,
+                    'total_distance': 0
+                }
+            
+            # Calculate fuel consumption for this trip
+            fuel_consumed = fuel_controller.calculate_fuel_consumption(vehicle, total_distance)
+            average_price = fuel_controller.calculate_average_fuel_price_per_liter(vehicle)
+            trip_cost = fuel_consumed * average_price
+            
+            vehicle_fuel_data[vehicle]['fuel_consumed_liters'] += fuel_consumed
+            vehicle_fuel_data[vehicle]['total_fuel_cost'] += trip_cost
+            vehicle_fuel_data[vehicle]['total_distance'] += total_distance
+        
+        # Add current fuel levels
+        for vehicle in vehicle_fuel_data.keys():
+            fuel_status = fuel_controller.check_fuel_status(vehicle)
+            vehicle_fuel_data[vehicle]['fuel_after_liters'] = fuel_status.get('current_fuel_liters', 0)
+        
+        return vehicle_fuel_data

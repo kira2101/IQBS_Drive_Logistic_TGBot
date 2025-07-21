@@ -3,7 +3,8 @@ from datetime import datetime
 from typing import Dict, List, Optional
 from sqlalchemy.orm import Session
 from models import UserState, User, Project, WorkDay, Activity, Trip, ShoppingSession
-from crm_remonline import get_all_objects
+from crm_remonline import get_all_objects, STATIC_OBJECTS
+from crm_cache_manager import get_cache_manager
 
 class StateManager:
     def __init__(self, db: Session):
@@ -107,9 +108,25 @@ class StateManager:
     def get_projects(self) -> List[Project]:
         return self.db.query(Project).filter(Project.is_active == True).all()
     
-    def get_all_objects(self) -> List[Dict]:
-        """Get combined list of static and CRM objects"""
-        return get_all_objects()
+    def get_all_objects(self, telegram_id: int = None, use_cache: bool = True) -> tuple[List[Dict], Optional[str]]:
+        """Get combined list of static and CRM objects with caching optimization"""
+        cache_warning = None
+        
+        if telegram_id and use_cache:
+            # Use cache manager for optimized fetching
+            cache_manager = get_cache_manager(self.db)
+            user_id = self._get_user_id(telegram_id)
+            
+            # Get CRM objects from cache with staleness check
+            crm_objects, is_stale = cache_manager.get_or_fetch_with_staleness_check(user_id, 'daily')
+            
+            # Cache warnings are disabled as cache refreshes automatically
+            
+            # Combine with static objects
+            return STATIC_OBJECTS.copy() + crm_objects, cache_warning
+        else:
+            # Fallback to direct CRM call (for backwards compatibility)
+            return get_all_objects(), None
     
     def create_project(self, name: str, description: str = None) -> Project:
         project = Project(name=name, description=description)
@@ -117,12 +134,61 @@ class StateManager:
         self.db.commit()
         return project
     
-    def start_trip(self, telegram_id: int, destination: str, project_id: int = None):
-        self.set_user_state(telegram_id, 'driving', {
+    def start_trip(self, telegram_id: int, destination: str, project_id: int = None, extra_data: dict = None, start_location: str = None):
+        state_data = {
             'destination': destination,
             'project_id': project_id,
             'start_time': datetime.now().isoformat()
-        })
+        }
+        if start_location:
+            state_data['start_location'] = start_location
+        if extra_data:
+            state_data.update(extra_data)
+        self.set_user_state(telegram_id, 'driving', state_data)
+    
+    def set_user_location(self, telegram_id: int, location_name: str, crm_object_id: str = None):
+        """Set the current location of the user"""
+        from models import UserState
+        import json
+        
+        location_data = {
+            'location_name': location_name,
+            'updated_at': datetime.now().isoformat()
+        }
+        if crm_object_id:
+            location_data['crm_object_id'] = crm_object_id
+        
+        user_id = self._get_user_id(telegram_id)
+        
+        # Remove existing location state
+        self.db.query(UserState).filter(
+            UserState.user_id == user_id,
+            UserState.state == 'current_location'
+        ).delete()
+        
+        # Add new location state
+        location_state = UserState(
+            user_id=user_id,
+            state='current_location',
+            data=json.dumps(location_data)
+        )
+        self.db.add(location_state)
+        self.db.commit()
+    
+    def get_user_location(self, telegram_id: int) -> dict:
+        """Get the current location of the user"""
+        from models import UserState
+        import json
+        
+        user_id = self._get_user_id(telegram_id)
+        location_state = self.db.query(UserState).filter(
+            UserState.user_id == user_id,
+            UserState.state == 'current_location'
+        ).first()
+        
+        if location_state and location_state.data:
+            return json.loads(location_state.data)
+        return {}
     
     def end_trip(self, telegram_id: int, distance_km: float) -> Trip:
         state_data = self.get_user_state_data(telegram_id)
@@ -221,7 +287,7 @@ class StateManager:
     
     def get_object_by_name(self, name: str) -> Optional[Dict]:
         """Get object by name from combined list (static + CRM)"""
-        all_objects = self.get_all_objects()
+        all_objects, _ = self.get_all_objects()
         for obj in all_objects:
             if obj['name'] == name:
                 return obj
@@ -229,7 +295,7 @@ class StateManager:
     
     def get_object_by_name_and_id(self, obj_id: str) -> Optional[Dict]:
         """Get object by ID from combined list (static + CRM)"""
-        all_objects = self.get_all_objects()
+        all_objects, _ = self.get_all_objects()
         for obj in all_objects:
             if str(obj.get('id', '')) == str(obj_id):
                 return obj
