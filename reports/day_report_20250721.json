@@ -1,0 +1,631 @@
+{
+  "report_type": "day_report",
+  "report_date": "2025-07-21",
+  "user_id": 1,
+  "total_trips": 4,
+  "trips": [
+    {
+      "trip_id": 14,
+      "vehicle": "Skoda",
+      "start_time": "2025-07-21T14:25:59.799272",
+      "end_time": "2025-07-21T15:08:21.844436",
+      "duration_minutes": 42.3674194,
+      "distance_km": 15.0,
+      "project_totals": {
+        "ППТМ м. Київ вул. Л. Курбаса 4-в": {
+          "project_id": 7,
+          "time_minutes": 0.0,
+          "distance_km": 5.0,
+          "activities_summary": [
+            "Закупка: 14:57-14:57 (0мин)",
+            "Поездка до магазина (доля): 14:56-14:56 (0мин, 5.0 км)"
+          ],
+          "crm_metadata": {
+            "source": "remonline",
+            "crm_id": 54375840,
+            "id_label": "A056",
+            "status_name": "В роботі",
+            "status_id": 2974853,
+            "created_at": "2025-07-07T11:02:15Z"
+          }
+        },
+        "Iq Pizza Бориспіль, вул. Голубівка 4": {
+          "project_id": 9,
+          "time_minutes": 0.0,
+          "distance_km": 5.0,
+          "activities_summary": [
+            "Поездка до Iq Pizza Бориспіль, вул. Голубівка 4: 14:56-14:56 (0мин, 5.0 км)",
+            "Простой: 14:56-14:56 (0мин)"
+          ],
+          "crm_metadata": {
+            "source": "remonline",
+            "crm_id": 54375756,
+            "id_label": "A055",
+            "status_name": "В роботі",
+            "status_id": 2974853,
+            "created_at": "2025-07-07T11:00:38Z"
+          }
+        }
+      },
+      "activities": [
+        {
+          "id": 23,
+          "project_id": 7,
+          "project_name": "ППТМ м. Київ вул. Л. Курбаса 4-в",
+          "activity_type": "shopping",
+          "start_time": "2025-07-21T14:57:29.711622",
+          "end_time": "2025-07-21T14:57:33.529629",
+          "duration_minutes": 0,
+          "description": null
+        }
+      ],
+      "trips": [
+        {
+          "id": 39,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "",
+          "end_location": "Склад",
+          "start_time": "2025-07-21T14:51:49.591376",
+          "end_time": "2025-07-21T14:51:54.050710",
+          "distance_km": 5.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 40,
+          "project_id": 9,
+          "project_name": "Iq Pizza Бориспіль, вул. Голубівка 4",
+          "start_location": "",
+          "end_location": "Iq Pizza Бориспіль, вул. Голубівка 4",
+          "start_time": "2025-07-21T14:56:10.210458",
+          "end_time": "2025-07-21T14:56:15.983054",
+          "distance_km": 5.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 41,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "",
+          "end_location": "Магазин",
+          "start_time": "2025-07-21T14:56:42.180018",
+          "end_time": "2025-07-21T14:56:49.424705",
+          "distance_km": 5.0,
+          "duration_minutes": 0
+        }
+      ],
+      "shopping_sessions": [
+        {
+          "id": 10,
+          "project_ids": [
+            7
+          ],
+          "project_names": [
+            "ППТМ м. Київ вул. Л. Курбаса 4-в"
+          ],
+          "start_time": "2025-07-21T14:57:29.711622",
+          "end_time": "2025-07-21T14:57:33.529629",
+          "duration_minutes": 0
+        }
+      ],
+      "idle_times": [
+        {
+          "id": 8,
+          "project_ids": [
+            9
+          ],
+          "project_names": [
+            "Iq Pizza Бориспіль, вул. Голубівка 4"
+          ],
+          "start_time": "2025-07-21T14:56:24.196606",
+          "end_time": "2025-07-21T14:56:30.441327",
+          "duration_minutes": 0
+        }
+      ]
+    },
+    {
+      "trip_id": 15,
+      "vehicle": "Fiat Ducato",
+      "start_time": "2025-07-21T15:11:11.003526",
+      "end_time": "2025-07-21T15:12:56.512611",
+      "duration_minutes": 1.75848475,
+      "distance_km": 23.0,
+      "project_totals": {
+        "ППТМ м. Київ вул. Л. Курбаса 4-в": {
+          "project_id": 7,
+          "time_minutes": 0.0,
+          "distance_km": 6.5,
+          "activities_summary": [
+            "Закупка: 15:12-15:12 (0мин)",
+            "Поездка до ППТМ м. Київ вул. Л. Курбаса 4-в: 15:11-15:11 (0мин, 5.0 км)",
+            "Поездка до магазина (доля): 15:11-15:11 (0мин, 1.5 км)"
+          ],
+          "crm_metadata": {
+            "source": "remonline",
+            "crm_id": 54375840,
+            "id_label": "A056",
+            "status_name": "В роботі",
+            "status_id": 2974853,
+            "created_at": "2025-07-07T11:02:15Z"
+          }
+        },
+        "Iq Pizza Бориспіль, вул. Голубівка 4": {
+          "project_id": 9,
+          "time_minutes": 0.0,
+          "distance_km": 1.5,
+          "activities_summary": [
+            "Закупка: 15:12-15:12 (0мин)",
+            "Поездка до магазина (доля): 15:11-15:11 (0мин, 1.5 км)"
+          ],
+          "crm_metadata": {
+            "source": "remonline",
+            "crm_id": 54375756,
+            "id_label": "A055",
+            "status_name": "В роботі",
+            "status_id": 2974853,
+            "created_at": "2025-07-07T11:00:38Z"
+          }
+        },
+        "Iq Pizza Київ вул. Клавдіївська 34": {
+          "project_id": 8,
+          "time_minutes": 0,
+          "distance_km": 5.0,
+          "activities_summary": [
+            "Поездка до Iq Pizza Київ вул. Клавдіївська 34: 15:11-15:11 (0мин, 5.0 км)"
+          ],
+          "crm_metadata": {
+            "source": "remonline",
+            "crm_id": 54375639,
+            "id_label": "A054",
+            "status_name": "В роботі",
+            "status_id": 2974853,
+            "created_at": "2025-07-07T10:58:41Z"
+          }
+        },
+        "буча": {
+          "project_id": 16,
+          "time_minutes": 0,
+          "distance_km": 5.0,
+          "activities_summary": [
+            "Поездка до буча: 15:12-15:12 (0мин, 5.0 км)"
+          ],
+          "crm_metadata": {
+            "source": "static"
+          }
+        }
+      },
+      "activities": [
+        {
+          "id": 24,
+          "project_id": 7,
+          "project_name": "ППТМ м. Київ вул. Л. Курбаса 4-в",
+          "activity_type": "shopping",
+          "start_time": "2025-07-21T15:12:00.610059",
+          "end_time": "2025-07-21T15:12:02.697872",
+          "duration_minutes": 0,
+          "description": null
+        },
+        {
+          "id": 25,
+          "project_id": 9,
+          "project_name": "Iq Pizza Бориспіль, вул. Голубівка 4",
+          "activity_type": "shopping",
+          "start_time": "2025-07-21T15:12:00.610059",
+          "end_time": "2025-07-21T15:12:02.697872",
+          "duration_minutes": 0,
+          "description": null
+        }
+      ],
+      "trips": [
+        {
+          "id": 42,
+          "project_id": 7,
+          "project_name": "ППТМ м. Київ вул. Л. Курбаса 4-в",
+          "start_location": "",
+          "end_location": "ППТМ м. Київ вул. Л. Курбаса 4-в",
+          "start_time": "2025-07-21T15:11:17.344314",
+          "end_time": "2025-07-21T15:11:21.485080",
+          "distance_km": 5.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 43,
+          "project_id": 8,
+          "project_name": "Iq Pizza Київ вул. Клавдіївська 34",
+          "start_location": "",
+          "end_location": "Iq Pizza Київ вул. Клавдіївська 34",
+          "start_time": "2025-07-21T15:11:31.758966",
+          "end_time": "2025-07-21T15:11:34.689463",
+          "distance_km": 5.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 44,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "",
+          "end_location": "Магазин",
+          "start_time": "2025-07-21T15:11:43.280546",
+          "end_time": "2025-07-21T15:11:51.172778",
+          "distance_km": 3.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 45,
+          "project_id": 16,
+          "project_name": "буча",
+          "start_location": "",
+          "end_location": "буча",
+          "start_time": "2025-07-21T15:12:29.808272",
+          "end_time": "2025-07-21T15:12:41.899449",
+          "distance_km": 5.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 46,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "",
+          "end_location": "Дом",
+          "start_time": "2025-07-21T15:12:47.442484",
+          "end_time": "2025-07-21T15:12:51.974106",
+          "distance_km": 5.0,
+          "duration_minutes": 0
+        }
+      ],
+      "shopping_sessions": [
+        {
+          "id": 11,
+          "project_ids": [
+            7,
+            9
+          ],
+          "project_names": [
+            "ППТМ м. Київ вул. Л. Курбаса 4-в",
+            "Iq Pizza Бориспіль, вул. Голубівка 4"
+          ],
+          "start_time": "2025-07-21T15:12:00.610059",
+          "end_time": "2025-07-21T15:12:02.697872",
+          "duration_minutes": 0
+        }
+      ],
+      "idle_times": []
+    },
+    {
+      "trip_id": 16,
+      "vehicle": "Машина А",
+      "start_time": "2025-07-21T15:55:10.839994",
+      "end_time": "2025-07-21T15:58:53.813742",
+      "duration_minutes": 3.7162291333333335,
+      "distance_km": 170.0,
+      "project_totals": {
+        "Склад": {
+          "project_id": 4,
+          "time_minutes": 0.0,
+          "distance_km": 5.0,
+          "activities_summary": [
+            "Закупка: 15:55-15:55 (0мин)",
+            "Поездка до магазина (доля): 15:55-15:55 (0мин, 5.0 км)"
+          ],
+          "crm_metadata": {
+            "source": "static"
+          }
+        },
+        "ППТМ м. Київ вул. Л. Курбаса 4-в": {
+          "project_id": 7,
+          "time_minutes": 0.0,
+          "distance_km": 20.0,
+          "activities_summary": [
+            "Закупка: 15:55-15:55 (0мин)",
+            "Поездка до ППТМ м. Київ вул. Л. Курбаса 4-в: 15:55-15:56 (0мин, 15.0 км)",
+            "Поездка до магазина (доля): 15:55-15:55 (0мин, 5.0 км)"
+          ],
+          "crm_metadata": {
+            "source": "remonline",
+            "crm_id": 54375840,
+            "id_label": "A056",
+            "status_name": "В роботі",
+            "status_id": 2974853,
+            "created_at": "2025-07-07T11:02:15Z"
+          }
+        },
+        "Iq Pizza Київ вул. Клавдіївська 34": {
+          "project_id": 8,
+          "time_minutes": 0,
+          "distance_km": 80.0,
+          "activities_summary": [
+            "Поездка до Iq Pizza Київ вул. Клавдіївська 34: 15:58-15:58 (0мин, 80.0 км)"
+          ],
+          "crm_metadata": {
+            "source": "remonline",
+            "crm_id": 54375639,
+            "id_label": "A054",
+            "status_name": "В роботі",
+            "status_id": 2974853,
+            "created_at": "2025-07-07T10:58:41Z"
+          }
+        }
+      },
+      "activities": [
+        {
+          "id": 26,
+          "project_id": 4,
+          "project_name": "Склад",
+          "activity_type": "shopping",
+          "start_time": "2025-07-21T15:55:31.244377",
+          "end_time": "2025-07-21T15:55:49.896187",
+          "duration_minutes": 0,
+          "description": null
+        },
+        {
+          "id": 27,
+          "project_id": 7,
+          "project_name": "ППТМ м. Київ вул. Л. Курбаса 4-в",
+          "activity_type": "shopping",
+          "start_time": "2025-07-21T15:55:31.244377",
+          "end_time": "2025-07-21T15:55:49.896187",
+          "duration_minutes": 0,
+          "description": null
+        }
+      ],
+      "trips": [
+        {
+          "id": 47,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "",
+          "end_location": "Магазин",
+          "start_time": "2025-07-21T15:55:17.182976",
+          "end_time": "2025-07-21T15:55:24.353464",
+          "distance_km": 10.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 48,
+          "project_id": 7,
+          "project_name": "ППТМ м. Київ вул. Л. Курбаса 4-в",
+          "start_location": "",
+          "end_location": "ППТМ м. Київ вул. Л. Курбаса 4-в",
+          "start_time": "2025-07-21T15:55:56.659181",
+          "end_time": "2025-07-21T15:56:04.963274",
+          "distance_km": 15.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 49,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "",
+          "end_location": "Заправка",
+          "start_time": "2025-07-21T15:56:19.768457",
+          "end_time": "2025-07-21T15:56:24.662045",
+          "distance_km": 50.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 50,
+          "project_id": 8,
+          "project_name": "Iq Pizza Київ вул. Клавдіївська 34",
+          "start_location": "",
+          "end_location": "Iq Pizza Київ вул. Клавдіївська 34",
+          "start_time": "2025-07-21T15:58:17.438220",
+          "end_time": "2025-07-21T15:58:28.616693",
+          "distance_km": 80.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 51,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "",
+          "end_location": "Дом",
+          "start_time": "2025-07-21T15:58:34.036805",
+          "end_time": "2025-07-21T15:58:43.711124",
+          "distance_km": 15.0,
+          "duration_minutes": 0
+        }
+      ],
+      "shopping_sessions": [
+        {
+          "id": 12,
+          "project_ids": [
+            4,
+            7
+          ],
+          "project_names": [
+            "Склад",
+            "ППТМ м. Київ вул. Л. Курбаса 4-в"
+          ],
+          "start_time": "2025-07-21T15:55:31.244377",
+          "end_time": "2025-07-21T15:55:49.896187",
+          "duration_minutes": 0
+        }
+      ],
+      "idle_times": []
+    },
+    {
+      "trip_id": 17,
+      "vehicle": "Машина А",
+      "start_time": "2025-07-21T16:22:19.331040",
+      "end_time": "2025-07-21T16:23:23.591259",
+      "duration_minutes": 1.0710036500000002,
+      "distance_km": 105.0,
+      "project_totals": {
+        "ППТМ м. Київ вул. Л. Курбаса 4-в": {
+          "project_id": 7,
+          "time_minutes": 0,
+          "distance_km": 65.0,
+          "activities_summary": [
+            "Поездка до ППТМ м. Київ вул. Л. Курбаса 4-в: 16:22-16:22 (0мин, 30.0 км)",
+            "Поездка до ППТМ м. Київ вул. Л. Курбаса 4-в: 16:22-16:23 (0мин, 35.0 км)"
+          ],
+          "crm_metadata": {
+            "source": "remonline",
+            "crm_id": 54375840,
+            "id_label": "A056",
+            "status_name": "В роботі",
+            "status_id": 2974853,
+            "created_at": "2025-07-07T11:02:15Z"
+          }
+        }
+      },
+      "activities": [],
+      "trips": [
+        {
+          "id": 52,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "",
+          "end_location": "Магазин",
+          "start_time": "2025-07-21T16:22:25.189012",
+          "end_time": "2025-07-21T16:22:29.091108",
+          "distance_km": 15.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 53,
+          "project_id": 7,
+          "project_name": "ППТМ м. Київ вул. Л. Курбаса 4-в",
+          "start_location": "",
+          "end_location": "ППТМ м. Київ вул. Л. Курбаса 4-в",
+          "start_time": "2025-07-21T16:22:33.718665",
+          "end_time": "2025-07-21T16:22:46.099516",
+          "distance_km": 30.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 54,
+          "project_id": 7,
+          "project_name": "ППТМ м. Київ вул. Л. Курбаса 4-в",
+          "start_location": "",
+          "end_location": "ППТМ м. Київ вул. Л. Курбаса 4-в",
+          "start_time": "2025-07-21T16:22:52.922897",
+          "end_time": "2025-07-21T16:23:06.344948",
+          "distance_km": 35.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 55,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "",
+          "end_location": "Дом",
+          "start_time": "2025-07-21T16:23:14.066945",
+          "end_time": "2025-07-21T16:23:17.982820",
+          "distance_km": 25.0,
+          "duration_minutes": 0
+        }
+      ],
+      "shopping_sessions": [],
+      "idle_times": []
+    }
+  ],
+  "totals": {
+    "total_time_minutes": 48.91313693333334,
+    "total_distance_km": 313.0,
+    "total_idle_time_minutes": 0,
+    "project_totals": {
+      "ППТМ м. Київ вул. Л. Курбаса 4-в": {
+        "project_id": 7,
+        "time_minutes": 0.0,
+        "distance_km": 96.5,
+        "activities_summary": [
+          "Закупка: 14:57-14:57 (0мин)",
+          "Поездка до магазина (доля): 14:56-14:56 (0мин, 5.0 км)",
+          "Закупка: 15:12-15:12 (0мин)",
+          "Поездка до ППТМ м. Київ вул. Л. Курбаса 4-в: 15:11-15:11 (0мин, 5.0 км)",
+          "Поездка до магазина (доля): 15:11-15:11 (0мин, 1.5 км)",
+          "Закупка: 15:55-15:55 (0мин)",
+          "Поездка до ППТМ м. Київ вул. Л. Курбаса 4-в: 15:55-15:56 (0мин, 15.0 км)",
+          "Поездка до магазина (доля): 15:55-15:55 (0мин, 5.0 км)",
+          "Поездка до ППТМ м. Київ вул. Л. Курбаса 4-в: 16:22-16:22 (0мин, 30.0 км)",
+          "Поездка до ППТМ м. Київ вул. Л. Курбаса 4-в: 16:22-16:23 (0мин, 35.0 км)"
+        ],
+        "crm_metadata": {
+          "source": "remonline",
+          "crm_id": 54375840,
+          "id_label": "A056",
+          "status_name": "В роботі",
+          "status_id": 2974853,
+          "created_at": "2025-07-07T11:02:15Z"
+        }
+      },
+      "Iq Pizza Бориспіль, вул. Голубівка 4": {
+        "project_id": 9,
+        "time_minutes": 0.0,
+        "distance_km": 6.5,
+        "activities_summary": [
+          "Поездка до Iq Pizza Бориспіль, вул. Голубівка 4: 14:56-14:56 (0мин, 5.0 км)",
+          "Простой: 14:56-14:56 (0мин)",
+          "Закупка: 15:12-15:12 (0мин)",
+          "Поездка до магазина (доля): 15:11-15:11 (0мин, 1.5 км)"
+        ],
+        "crm_metadata": {
+          "source": "remonline",
+          "crm_id": 54375756,
+          "id_label": "A055",
+          "status_name": "В роботі",
+          "status_id": 2974853,
+          "created_at": "2025-07-07T11:00:38Z"
+        }
+      },
+      "Iq Pizza Київ вул. Клавдіївська 34": {
+        "project_id": 8,
+        "time_minutes": 0,
+        "distance_km": 85.0,
+        "activities_summary": [
+          "Поездка до Iq Pizza Київ вул. Клавдіївська 34: 15:11-15:11 (0мин, 5.0 км)",
+          "Поездка до Iq Pizza Київ вул. Клавдіївська 34: 15:58-15:58 (0мин, 80.0 км)"
+        ],
+        "crm_metadata": {
+          "source": "remonline",
+          "crm_id": 54375639,
+          "id_label": "A054",
+          "status_name": "В роботі",
+          "status_id": 2974853,
+          "created_at": "2025-07-07T10:58:41Z"
+        }
+      },
+      "буча": {
+        "project_id": 16,
+        "time_minutes": 0,
+        "distance_km": 5.0,
+        "activities_summary": [
+          "Поездка до буча: 15:12-15:12 (0мин, 5.0 км)"
+        ],
+        "crm_metadata": {
+          "source": "static"
+        }
+      },
+      "Склад": {
+        "project_id": 4,
+        "time_minutes": 0.0,
+        "distance_km": 5.0,
+        "activities_summary": [
+          "Закупка: 15:55-15:55 (0мин)",
+          "Поездка до магазина (доля): 15:55-15:55 (0мин, 5.0 км)"
+        ],
+        "crm_metadata": {
+          "source": "static"
+        }
+      }
+    },
+    "vehicle_totals": {
+      "Skoda": {
+        "time_minutes": 42.3674194,
+        "distance_km": 15.0,
+        "trips_count": 1
+      },
+      "Fiat Ducato": {
+        "time_minutes": 1.75848475,
+        "distance_km": 23.0,
+        "trips_count": 1
+      },
+      "Машина А": {
+        "time_minutes": 4.787232783333334,
+        "distance_km": 275.0,
+        "trips_count": 2
+      }
+    }
+  }
+}

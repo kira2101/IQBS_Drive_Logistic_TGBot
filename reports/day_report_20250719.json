@@ -1,0 +1,1093 @@
+{
+  "report_type": "day_report",
+  "report_date": "2025-07-19",
+  "user_id": 1,
+  "total_trips": 10,
+  "trips": [
+    {
+      "trip_id": 1,
+      "vehicle": "Skoda",
+      "start_time": "2025-07-19T18:27:48.399177",
+      "end_time": "2025-07-19T18:28:31.266168",
+      "duration_minutes": 0.7144498499999999,
+      "distance_km": 10.0,
+      "project_totals": {
+        "Склад": {
+          "project_id": 4,
+          "time_minutes": 0,
+          "distance_km": 0.0,
+          "activities_summary": [
+            "Работа: 18:28-18:28 (0мин)"
+          ]
+        },
+        "Дом": {
+          "project_id": 6,
+          "time_minutes": 0,
+          "distance_km": 5.0,
+          "activities_summary": [
+            "Поездка до Дом: 18:28-18:28 (0мин, 5.0 км)"
+          ]
+        }
+      },
+      "activities": [
+        {
+          "id": 1,
+          "project_id": 4,
+          "project_name": "Склад",
+          "activity_type": "working",
+          "start_time": "2025-07-19T18:28:04.153581",
+          "end_time": "2025-07-19T18:28:08.944793",
+          "duration_minutes": 0,
+          "description": null
+        }
+      ],
+      "trips": [
+        {
+          "id": 1,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "",
+          "end_location": "Склад",
+          "start_time": "2025-07-19T18:27:51.283253",
+          "end_time": "2025-07-19T18:28:00.159710",
+          "distance_km": 5.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 2,
+          "project_id": 6,
+          "project_name": "Дом",
+          "start_location": "",
+          "end_location": "Дом",
+          "start_time": "2025-07-19T18:28:13.884145",
+          "end_time": "2025-07-19T18:28:20.088255",
+          "distance_km": 5.0,
+          "duration_minutes": 0
+        }
+      ],
+      "shopping_sessions": [],
+      "idle_times": []
+    },
+    {
+      "trip_id": 2,
+      "vehicle": "Fiat Ducato",
+      "start_time": "2025-07-19T18:28:45.244618",
+      "end_time": "2025-07-19T18:29:33.601514",
+      "duration_minutes": 0.8059482666666666,
+      "distance_km": 7.0,
+      "project_totals": {
+        "Объект 1": {
+          "project_id": 1,
+          "time_minutes": 0,
+          "distance_km": 5.0,
+          "activities_summary": [
+            "Поездка до Объект 1: 18:28-18:28 (0мин, 5.0 км)"
+          ]
+        },
+        "Объект 3": {
+          "project_id": 3,
+          "time_minutes": 0,
+          "distance_km": 2.0,
+          "activities_summary": [
+            "Поездка до Объект 3: 18:29-18:29 (0мин, 2.0 км)"
+          ]
+        }
+      },
+      "activities": [],
+      "trips": [
+        {
+          "id": 3,
+          "project_id": 1,
+          "project_name": "Объект 1",
+          "start_location": "",
+          "end_location": "Объект 1",
+          "start_time": "2025-07-19T18:28:51.766088",
+          "end_time": "2025-07-19T18:28:56.003340",
+          "distance_km": 5.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 4,
+          "project_id": 3,
+          "project_name": "Объект 3",
+          "start_location": "",
+          "end_location": "Объект 3",
+          "start_time": "2025-07-19T18:29:00.866383",
+          "end_time": "2025-07-19T18:29:07.234847",
+          "distance_km": 2.0,
+          "duration_minutes": 0
+        }
+      ],
+      "shopping_sessions": [],
+      "idle_times": []
+    },
+    {
+      "trip_id": 3,
+      "vehicle": "Skoda",
+      "start_time": "2025-07-19T18:31:03.866957",
+      "end_time": "2025-07-19T18:31:56.191759",
+      "duration_minutes": 0.8720800333333333,
+      "distance_km": 5.0,
+      "project_totals": {
+        "Склад": {
+          "project_id": 4,
+          "time_minutes": 0.0,
+          "distance_km": 0.0,
+          "activities_summary": [
+            "Простой: 18:31-18:31 (0мин)"
+          ]
+        }
+      },
+      "activities": [],
+      "trips": [
+        {
+          "id": 5,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "",
+          "end_location": "Склад",
+          "start_time": "2025-07-19T18:31:07.082867",
+          "end_time": "2025-07-19T18:31:10.680615",
+          "distance_km": 5.0,
+          "duration_minutes": 0
+        }
+      ],
+      "shopping_sessions": [],
+      "idle_times": [
+        {
+          "id": 1,
+          "project_ids": [
+            4
+          ],
+          "project_names": [
+            "Склад"
+          ],
+          "start_time": "2025-07-19T18:31:27.429244",
+          "end_time": "2025-07-19T18:31:34.980658",
+          "duration_minutes": 0
+        }
+      ]
+    },
+    {
+      "trip_id": 4,
+      "vehicle": "Skoda",
+      "start_time": "2025-07-19T18:55:02.258544",
+      "end_time": "2025-07-19T18:58:01.801644",
+      "duration_minutes": 2.992385,
+      "distance_km": 7.0,
+      "project_totals": {
+        "Объект 1": {
+          "project_id": 1,
+          "time_minutes": 0.0,
+          "distance_km": 1.6666666666666667,
+          "activities_summary": [
+            "Закупка: 18:55-18:55 (0мин)",
+            "Поездка до магазина (доля): 18:55-18:55 (0мин, 1.7 км)"
+          ]
+        },
+        "Объект 2": {
+          "project_id": 2,
+          "time_minutes": 0.0,
+          "distance_km": 1.6666666666666667,
+          "activities_summary": [
+            "Закупка: 18:55-18:55 (0мин)",
+            "Поездка до магазина (доля): 18:55-18:55 (0мин, 1.7 км)"
+          ]
+        },
+        "Объект 3": {
+          "project_id": 3,
+          "time_minutes": 0.0,
+          "distance_km": 1.6666666666666667,
+          "activities_summary": [
+            "Закупка: 18:55-18:55 (0мин)",
+            "Поездка до магазина (доля): 18:55-18:55 (0мин, 1.7 км)"
+          ]
+        },
+        "Склад": {
+          "project_id": 4,
+          "time_minutes": 0,
+          "distance_km": 1.0,
+          "activities_summary": [
+            "Поездка до Склад: 18:55-18:55 (0мин, 1.0 км)"
+          ]
+        },
+        "Дом": {
+          "project_id": 6,
+          "time_minutes": 0,
+          "distance_km": 1.0,
+          "activities_summary": [
+            "Поездка до Дом: 18:55-18:56 (0мин, 1.0 км)"
+          ]
+        }
+      },
+      "activities": [
+        {
+          "id": 2,
+          "project_id": 1,
+          "project_name": "Объект 1",
+          "activity_type": "shopping",
+          "start_time": "2025-07-19T18:55:36.407641",
+          "end_time": "2025-07-19T18:55:46.706986",
+          "duration_minutes": 0,
+          "description": null
+        },
+        {
+          "id": 3,
+          "project_id": 2,
+          "project_name": "Объект 2",
+          "activity_type": "shopping",
+          "start_time": "2025-07-19T18:55:36.407641",
+          "end_time": "2025-07-19T18:55:46.706986",
+          "duration_minutes": 0,
+          "description": null
+        },
+        {
+          "id": 4,
+          "project_id": 3,
+          "project_name": "Объект 3",
+          "activity_type": "shopping",
+          "start_time": "2025-07-19T18:55:36.407641",
+          "end_time": "2025-07-19T18:55:46.706986",
+          "duration_minutes": 0,
+          "description": null
+        }
+      ],
+      "trips": [
+        {
+          "id": 6,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "",
+          "end_location": "Магазин",
+          "start_time": "2025-07-19T18:55:25.085864",
+          "end_time": "2025-07-19T18:55:29.513432",
+          "distance_km": 5.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 7,
+          "project_id": 4,
+          "project_name": "Склад",
+          "start_location": "",
+          "end_location": "Склад",
+          "start_time": "2025-07-19T18:55:50.021452",
+          "end_time": "2025-07-19T18:55:54.267040",
+          "distance_km": 1.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 8,
+          "project_id": 6,
+          "project_name": "Дом",
+          "start_location": "",
+          "end_location": "Дом",
+          "start_time": "2025-07-19T18:55:58.149715",
+          "end_time": "2025-07-19T18:56:09.077598",
+          "distance_km": 1.0,
+          "duration_minutes": 0
+        }
+      ],
+      "shopping_sessions": [
+        {
+          "id": 1,
+          "project_ids": [
+            1,
+            2,
+            3
+          ],
+          "project_names": [
+            "Объект 1",
+            "Объект 2",
+            "Объект 3"
+          ],
+          "start_time": "2025-07-19T18:55:36.407641",
+          "end_time": "2025-07-19T18:55:46.706986",
+          "duration_minutes": 0
+        }
+      ],
+      "idle_times": []
+    },
+    {
+      "trip_id": 5,
+      "vehicle": "Fiat Ducato",
+      "start_time": "2025-07-19T18:58:29.755253",
+      "end_time": "2025-07-19T18:59:21.231648",
+      "duration_minutes": 0.8579399166666666,
+      "distance_km": 2.0,
+      "project_totals": {
+        "Объект 3": {
+          "project_id": 3,
+          "time_minutes": 0.0,
+          "distance_km": 1.0,
+          "activities_summary": [
+            "Закупка: 18:58-18:58 (0мин)",
+            "Поездка до магазина (доля): 18:58-18:58 (0мин, 1.0 км)"
+          ]
+        },
+        "Дом": {
+          "project_id": 6,
+          "time_minutes": 0,
+          "distance_km": 1.0,
+          "activities_summary": [
+            "Поездка до Дом: 18:59-18:59 (0мин, 1.0 км)"
+          ]
+        }
+      },
+      "activities": [
+        {
+          "id": 5,
+          "project_id": 3,
+          "project_name": "Объект 3",
+          "activity_type": "shopping",
+          "start_time": "2025-07-19T18:58:54.017131",
+          "end_time": "2025-07-19T18:58:57.125559",
+          "duration_minutes": 0,
+          "description": null
+        }
+      ],
+      "trips": [
+        {
+          "id": 9,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "",
+          "end_location": "Магазин",
+          "start_time": "2025-07-19T18:58:32.975590",
+          "end_time": "2025-07-19T18:58:41.915725",
+          "distance_km": 1.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 10,
+          "project_id": 6,
+          "project_name": "Дом",
+          "start_location": "",
+          "end_location": "Дом",
+          "start_time": "2025-07-19T18:59:01.355390",
+          "end_time": "2025-07-19T18:59:06.049563",
+          "distance_km": 1.0,
+          "duration_minutes": 0
+        }
+      ],
+      "shopping_sessions": [
+        {
+          "id": 2,
+          "project_ids": [
+            3
+          ],
+          "project_names": [
+            "Объект 3"
+          ],
+          "start_time": "2025-07-19T18:58:54.017131",
+          "end_time": "2025-07-19T18:58:57.125559",
+          "duration_minutes": 0
+        }
+      ],
+      "idle_times": []
+    },
+    {
+      "trip_id": 6,
+      "vehicle": "Fiat Ducato",
+      "start_time": "2025-07-19T18:59:37.939174",
+      "end_time": "2025-07-19T19:00:38.630782",
+      "duration_minutes": 1.0115268,
+      "distance_km": 3.0,
+      "project_totals": {
+        "Склад": {
+          "project_id": 4,
+          "time_minutes": 0.0,
+          "distance_km": 0.5,
+          "activities_summary": [
+            "Закупка: 18:59-18:59 (0мин)",
+            "Поездка до магазина (доля): 18:59-18:59 (0мин, 0.5 км)"
+          ]
+        },
+        "Объект 3": {
+          "project_id": 3,
+          "time_minutes": 0.0,
+          "distance_km": 0.5,
+          "activities_summary": [
+            "Закупка: 18:59-18:59 (0мин)",
+            "Поездка до магазина (доля): 18:59-18:59 (0мин, 0.5 км)"
+          ]
+        },
+        "Объект 1": {
+          "project_id": 1,
+          "time_minutes": 0,
+          "distance_km": 1.0,
+          "activities_summary": [
+            "Поездка до Объект 1: 18:59-19:00 (0мин, 1.0 км)"
+          ]
+        },
+        "Дом": {
+          "project_id": 6,
+          "time_minutes": 0,
+          "distance_km": 1.0,
+          "activities_summary": [
+            "Поездка до Дом: 19:00-19:00 (0мин, 1.0 км)"
+          ]
+        }
+      },
+      "activities": [
+        {
+          "id": 6,
+          "project_id": 4,
+          "project_name": "Склад",
+          "activity_type": "shopping",
+          "start_time": "2025-07-19T18:59:50.244137",
+          "end_time": "2025-07-19T18:59:52.783455",
+          "duration_minutes": 0,
+          "description": null
+        },
+        {
+          "id": 7,
+          "project_id": 3,
+          "project_name": "Объект 3",
+          "activity_type": "shopping",
+          "start_time": "2025-07-19T18:59:50.244137",
+          "end_time": "2025-07-19T18:59:52.783455",
+          "duration_minutes": 0,
+          "description": null
+        }
+      ],
+      "trips": [
+        {
+          "id": 11,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "",
+          "end_location": "Магазин",
+          "start_time": "2025-07-19T18:59:41.020589",
+          "end_time": "2025-07-19T18:59:45.032468",
+          "distance_km": 1.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 12,
+          "project_id": 1,
+          "project_name": "Объект 1",
+          "start_location": "",
+          "end_location": "Объект 1",
+          "start_time": "2025-07-19T18:59:57.008888",
+          "end_time": "2025-07-19T19:00:13.052268",
+          "distance_km": 1.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 13,
+          "project_id": 6,
+          "project_name": "Дом",
+          "start_location": "",
+          "end_location": "Дом",
+          "start_time": "2025-07-19T19:00:17.508228",
+          "end_time": "2025-07-19T19:00:22.644176",
+          "distance_km": 1.0,
+          "duration_minutes": 0
+        }
+      ],
+      "shopping_sessions": [
+        {
+          "id": 3,
+          "project_ids": [
+            4,
+            3
+          ],
+          "project_names": [
+            "Склад",
+            "Объект 3"
+          ],
+          "start_time": "2025-07-19T18:59:50.244137",
+          "end_time": "2025-07-19T18:59:52.783455",
+          "duration_minutes": 0
+        }
+      ],
+      "idle_times": []
+    },
+    {
+      "trip_id": 7,
+      "vehicle": "Skoda",
+      "start_time": "2025-07-19T19:02:04.707111",
+      "end_time": "2025-07-19T19:07:11.616904",
+      "duration_minutes": 5.115163216666667,
+      "distance_km": 2.0,
+      "project_totals": {
+        "Объект 1": {
+          "project_id": 1,
+          "time_minutes": 0.0,
+          "distance_km": 1.0,
+          "activities_summary": [
+            "Поездка до Объект 1: 19:02-19:02 (0мин, 1.0 км)",
+            "Простой: 19:04-19:04 (0мин)"
+          ]
+        },
+        "Дом": {
+          "project_id": 6,
+          "time_minutes": 0,
+          "distance_km": 1.0,
+          "activities_summary": [
+            "Поездка до Дом: 19:04-19:04 (0мин, 1.0 км)"
+          ]
+        }
+      },
+      "activities": [],
+      "trips": [
+        {
+          "id": 14,
+          "project_id": 1,
+          "project_name": "Объект 1",
+          "start_location": "",
+          "end_location": "Объект 1",
+          "start_time": "2025-07-19T19:02:52.044019",
+          "end_time": "2025-07-19T19:02:58.549707",
+          "distance_km": 1.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 15,
+          "project_id": 6,
+          "project_name": "Дом",
+          "start_location": "",
+          "end_location": "Дом",
+          "start_time": "2025-07-19T19:04:17.250182",
+          "end_time": "2025-07-19T19:04:21.031808",
+          "distance_km": 1.0,
+          "duration_minutes": 0
+        }
+      ],
+      "shopping_sessions": [],
+      "idle_times": [
+        {
+          "id": 2,
+          "project_ids": [
+            1
+          ],
+          "project_names": [
+            "Объект 1"
+          ],
+          "start_time": "2025-07-19T19:04:09.479219",
+          "end_time": "2025-07-19T19:04:12.521690",
+          "duration_minutes": 0
+        }
+      ]
+    },
+    {
+      "trip_id": 8,
+      "vehicle": "Skoda",
+      "start_time": "2025-07-19T19:16:40.675191",
+      "end_time": "2025-07-19T19:18:05.859254",
+      "duration_minutes": 1.4197343833333333,
+      "distance_km": 3.0,
+      "project_totals": {
+        "Объект 3": {
+          "project_id": 3,
+          "time_minutes": 0.0,
+          "distance_km": 2.0,
+          "activities_summary": [
+            "Закупка: 19:16-19:17 (0мин)",
+            "Поездка до Объект 3: 19:17-19:17 (0мин, 1.0 км)",
+            "Поездка до магазина (доля): 19:16-19:16 (0мин, 1.0 км)",
+            "Простой: 19:17-19:17 (0мин)"
+          ]
+        },
+        "Дом": {
+          "project_id": 6,
+          "time_minutes": 0,
+          "distance_km": 1.0,
+          "activities_summary": [
+            "Поездка до Дом: 19:17-19:17 (0мин, 1.0 км)"
+          ]
+        }
+      },
+      "activities": [
+        {
+          "id": 8,
+          "project_id": 3,
+          "project_name": "Объект 3",
+          "activity_type": "shopping",
+          "start_time": "2025-07-19T19:16:53.232925",
+          "end_time": "2025-07-19T19:17:11.485014",
+          "duration_minutes": 0,
+          "description": null
+        }
+      ],
+      "trips": [
+        {
+          "id": 16,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "",
+          "end_location": "Магазин",
+          "start_time": "2025-07-19T19:16:44.541406",
+          "end_time": "2025-07-19T19:16:47.601244",
+          "distance_km": 1.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 17,
+          "project_id": 3,
+          "project_name": "Объект 3",
+          "start_location": "",
+          "end_location": "Объект 3",
+          "start_time": "2025-07-19T19:17:16.691547",
+          "end_time": "2025-07-19T19:17:24.192155",
+          "distance_km": 1.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 18,
+          "project_id": 6,
+          "project_name": "Дом",
+          "start_location": "",
+          "end_location": "Дом",
+          "start_time": "2025-07-19T19:17:48.581267",
+          "end_time": "2025-07-19T19:17:53.730587",
+          "distance_km": 1.0,
+          "duration_minutes": 0
+        }
+      ],
+      "shopping_sessions": [
+        {
+          "id": 4,
+          "project_ids": [
+            3
+          ],
+          "project_names": [
+            "Объект 3"
+          ],
+          "start_time": "2025-07-19T19:16:53.232925",
+          "end_time": "2025-07-19T19:17:11.485014",
+          "duration_minutes": 0
+        }
+      ],
+      "idle_times": [
+        {
+          "id": 3,
+          "project_ids": [
+            3
+          ],
+          "project_names": [
+            "Объект 3"
+          ],
+          "start_time": "2025-07-19T19:17:38.859483",
+          "end_time": "2025-07-19T19:17:41.741169",
+          "duration_minutes": 0
+        }
+      ]
+    },
+    {
+      "trip_id": 9,
+      "vehicle": "Skoda",
+      "start_time": "2025-07-19T19:40:58.356998",
+      "end_time": "2025-07-19T19:43:38.069335",
+      "duration_minutes": 2.661872283333333,
+      "distance_km": 5.0,
+      "project_totals": {
+        "Склад": {
+          "project_id": 4,
+          "time_minutes": 0.0,
+          "distance_km": 1.5,
+          "activities_summary": [
+            "Закупка: 19:41-19:41 (0мин)",
+            "Поездка до Склад: 19:43-19:43 (0мин, 1.0 км)",
+            "Поездка до магазина (доля): 19:41-19:41 (0мин, 0.5 км)",
+            "Простой: 19:43-19:43 (0мин)"
+          ]
+        },
+        "Объект 3": {
+          "project_id": 3,
+          "time_minutes": 0.0,
+          "distance_km": 0.5,
+          "activities_summary": [
+            "Закупка: 19:41-19:41 (0мин)",
+            "Поездка до магазина (доля): 19:41-19:41 (0мин, 0.5 км)"
+          ]
+        },
+        "Заправка": {
+          "project_id": 5,
+          "time_minutes": 0,
+          "distance_km": 1.0,
+          "activities_summary": [
+            "Поездка до Заправка: 19:41-19:41 (0мин, 1.0 км)"
+          ]
+        },
+        "Объект 1": {
+          "project_id": 1,
+          "time_minutes": 0,
+          "distance_km": 1.0,
+          "activities_summary": [
+            "Поездка до Объект 1: 19:42-19:42 (0мин, 1.0 км)"
+          ]
+        },
+        "Дом": {
+          "project_id": 6,
+          "time_minutes": 0,
+          "distance_km": 1.0,
+          "activities_summary": [
+            "Поездка до Дом: 19:43-19:43 (0мин, 1.0 км)"
+          ]
+        }
+      },
+      "activities": [
+        {
+          "id": 9,
+          "project_id": 4,
+          "project_name": "Склад",
+          "activity_type": "shopping",
+          "start_time": "2025-07-19T19:41:31.278501",
+          "end_time": "2025-07-19T19:41:37.493267",
+          "duration_minutes": 0,
+          "description": null
+        },
+        {
+          "id": 10,
+          "project_id": 3,
+          "project_name": "Объект 3",
+          "activity_type": "shopping",
+          "start_time": "2025-07-19T19:41:31.278501",
+          "end_time": "2025-07-19T19:41:37.493267",
+          "duration_minutes": 0,
+          "description": null
+        }
+      ],
+      "trips": [
+        {
+          "id": 19,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "",
+          "end_location": "Магазин",
+          "start_time": "2025-07-19T19:41:01.313441",
+          "end_time": "2025-07-19T19:41:13.753423",
+          "distance_km": 1.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 20,
+          "project_id": 5,
+          "project_name": "Заправка",
+          "start_location": "",
+          "end_location": "Заправка",
+          "start_time": "2025-07-19T19:41:43.085897",
+          "end_time": "2025-07-19T19:41:48.238645",
+          "distance_km": 1.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 21,
+          "project_id": 1,
+          "project_name": "Объект 1",
+          "start_location": "",
+          "end_location": "Объект 1",
+          "start_time": "2025-07-19T19:42:53.903228",
+          "end_time": "2025-07-19T19:42:59.756582",
+          "distance_km": 1.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 22,
+          "project_id": 4,
+          "project_name": "Склад",
+          "start_location": "",
+          "end_location": "Склад",
+          "start_time": "2025-07-19T19:43:05.927557",
+          "end_time": "2025-07-19T19:43:10.373373",
+          "distance_km": 1.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 23,
+          "project_id": 6,
+          "project_name": "Дом",
+          "start_location": "",
+          "end_location": "Дом",
+          "start_time": "2025-07-19T19:43:27.245685",
+          "end_time": "2025-07-19T19:43:31.358876",
+          "distance_km": 1.0,
+          "duration_minutes": 0
+        }
+      ],
+      "shopping_sessions": [
+        {
+          "id": 5,
+          "project_ids": [
+            4,
+            3
+          ],
+          "project_names": [
+            "Склад",
+            "Объект 3"
+          ],
+          "start_time": "2025-07-19T19:41:31.278501",
+          "end_time": "2025-07-19T19:41:37.493267",
+          "duration_minutes": 0
+        }
+      ],
+      "idle_times": [
+        {
+          "id": 4,
+          "project_ids": [
+            4
+          ],
+          "project_names": [
+            "Склад"
+          ],
+          "start_time": "2025-07-19T19:43:15.728687",
+          "end_time": "2025-07-19T19:43:18.875231",
+          "duration_minutes": 0
+        }
+      ]
+    },
+    {
+      "trip_id": 10,
+      "vehicle": "Skoda",
+      "start_time": "2025-07-19T19:55:36.556509",
+      "end_time": "2025-07-19T19:56:51.869060",
+      "duration_minutes": 1.2552091833333334,
+      "distance_km": 4.0,
+      "project_totals": {
+        "Объект 1": {
+          "project_id": 1,
+          "time_minutes": 0.0,
+          "distance_km": 1.5,
+          "activities_summary": [
+            "Закупка: 19:56-19:56 (0мин)",
+            "Поездка до Объект 1: 19:55-19:55 (0мин, 1.0 км)",
+            "Поездка до магазина (доля): 19:55-19:55 (0мин, 0.5 км)"
+          ]
+        },
+        "Объект 2": {
+          "project_id": 2,
+          "time_minutes": 0.0,
+          "distance_km": 0.5,
+          "activities_summary": [
+            "Закупка: 19:56-19:56 (0мин)",
+            "Поездка до магазина (доля): 19:55-19:55 (0мин, 0.5 км)"
+          ]
+        },
+        "Склад": {
+          "project_id": 4,
+          "time_minutes": 0.0,
+          "distance_km": 1.0,
+          "activities_summary": [
+            "Поездка до Склад: 19:56-19:56 (0мин, 1.0 км)",
+            "Простой: 19:56-19:56 (0мин)"
+          ]
+        },
+        "Дом": {
+          "project_id": 6,
+          "time_minutes": 0,
+          "distance_km": 1.0,
+          "activities_summary": [
+            "Поездка до Дом: 19:56-19:56 (0мин, 1.0 км)"
+          ]
+        }
+      },
+      "activities": [
+        {
+          "id": 11,
+          "project_id": 1,
+          "project_name": "Объект 1",
+          "activity_type": "shopping",
+          "start_time": "2025-07-19T19:56:05.020794",
+          "end_time": "2025-07-19T19:56:10.603241",
+          "duration_minutes": 0,
+          "description": null
+        },
+        {
+          "id": 12,
+          "project_id": 2,
+          "project_name": "Объект 2",
+          "activity_type": "shopping",
+          "start_time": "2025-07-19T19:56:05.020794",
+          "end_time": "2025-07-19T19:56:10.603241",
+          "duration_minutes": 0,
+          "description": null
+        }
+      ],
+      "trips": [
+        {
+          "id": 24,
+          "project_id": 1,
+          "project_name": "Объект 1",
+          "start_location": "",
+          "end_location": "Объект 1",
+          "start_time": "2025-07-19T19:55:39.305491",
+          "end_time": "2025-07-19T19:55:43.813292",
+          "distance_km": 1.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 25,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "",
+          "end_location": "Магазин",
+          "start_time": "2025-07-19T19:55:53.464012",
+          "end_time": "2025-07-19T19:55:59.397613",
+          "distance_km": 1.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 26,
+          "project_id": 4,
+          "project_name": "Склад",
+          "start_location": "",
+          "end_location": "Склад",
+          "start_time": "2025-07-19T19:56:14.168647",
+          "end_time": "2025-07-19T19:56:19.895353",
+          "distance_km": 1.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 27,
+          "project_id": 6,
+          "project_name": "Дом",
+          "start_location": "",
+          "end_location": "Дом",
+          "start_time": "2025-07-19T19:56:36.819475",
+          "end_time": "2025-07-19T19:56:41.993103",
+          "distance_km": 1.0,
+          "duration_minutes": 0
+        }
+      ],
+      "shopping_sessions": [
+        {
+          "id": 6,
+          "project_ids": [
+            1,
+            2
+          ],
+          "project_names": [
+            "Объект 1",
+            "Объект 2"
+          ],
+          "start_time": "2025-07-19T19:56:05.020794",
+          "end_time": "2025-07-19T19:56:10.603241",
+          "duration_minutes": 0
+        }
+      ],
+      "idle_times": [
+        {
+          "id": 5,
+          "project_ids": [
+            4
+          ],
+          "project_names": [
+            "Склад"
+          ],
+          "start_time": "2025-07-19T19:56:29.788476",
+          "end_time": "2025-07-19T19:56:32.517561",
+          "duration_minutes": 0
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "total_time_minutes": 17.706308933333336,
+    "total_distance_km": 48.0,
+    "total_idle_time_minutes": 0,
+    "project_totals": {
+      "Склад": {
+        "project_id": 4,
+        "time_minutes": 0.0,
+        "distance_km": 4.0,
+        "activities_summary": [
+          "Работа: 18:28-18:28 (0мин)",
+          "Простой: 18:31-18:31 (0мин)",
+          "Поездка до Склад: 18:55-18:55 (0мин, 1.0 км)",
+          "Закупка: 18:59-18:59 (0мин)",
+          "Поездка до магазина (доля): 18:59-18:59 (0мин, 0.5 км)",
+          "Закупка: 19:41-19:41 (0мин)",
+          "Поездка до Склад: 19:43-19:43 (0мин, 1.0 км)",
+          "Поездка до магазина (доля): 19:41-19:41 (0мин, 0.5 км)",
+          "Простой: 19:43-19:43 (0мин)",
+          "Поездка до Склад: 19:56-19:56 (0мин, 1.0 км)",
+          "Простой: 19:56-19:56 (0мин)"
+        ]
+      },
+      "Дом": {
+        "project_id": 6,
+        "time_minutes": 0,
+        "distance_km": 12.0,
+        "activities_summary": [
+          "Поездка до Дом: 18:28-18:28 (0мин, 5.0 км)",
+          "Поездка до Дом: 18:55-18:56 (0мин, 1.0 км)",
+          "Поездка до Дом: 18:59-18:59 (0мин, 1.0 км)",
+          "Поездка до Дом: 19:00-19:00 (0мин, 1.0 км)",
+          "Поездка до Дом: 19:04-19:04 (0мин, 1.0 км)",
+          "Поездка до Дом: 19:17-19:17 (0мин, 1.0 км)",
+          "Поездка до Дом: 19:43-19:43 (0мин, 1.0 км)",
+          "Поездка до Дом: 19:56-19:56 (0мин, 1.0 км)"
+        ]
+      },
+      "Объект 1": {
+        "project_id": 1,
+        "time_minutes": 0.0,
+        "distance_km": 11.166666666666668,
+        "activities_summary": [
+          "Поездка до Объект 1: 18:28-18:28 (0мин, 5.0 км)",
+          "Закупка: 18:55-18:55 (0мин)",
+          "Поездка до магазина (доля): 18:55-18:55 (0мин, 1.7 км)",
+          "Поездка до Объект 1: 18:59-19:00 (0мин, 1.0 км)",
+          "Поездка до Объект 1: 19:02-19:02 (0мин, 1.0 км)",
+          "Простой: 19:04-19:04 (0мин)",
+          "Поездка до Объект 1: 19:42-19:42 (0мин, 1.0 км)",
+          "Закупка: 19:56-19:56 (0мин)",
+          "Поездка до Объект 1: 19:55-19:55 (0мин, 1.0 км)",
+          "Поездка до магазина (доля): 19:55-19:55 (0мин, 0.5 км)"
+        ]
+      },
+      "Объект 3": {
+        "project_id": 3,
+        "time_minutes": 0.0,
+        "distance_km": 7.666666666666667,
+        "activities_summary": [
+          "Поездка до Объект 3: 18:29-18:29 (0мин, 2.0 км)",
+          "Закупка: 18:55-18:55 (0мин)",
+          "Поездка до магазина (доля): 18:55-18:55 (0мин, 1.7 км)",
+          "Закупка: 18:58-18:58 (0мин)",
+          "Поездка до магазина (доля): 18:58-18:58 (0мин, 1.0 км)",
+          "Закупка: 18:59-18:59 (0мин)",
+          "Поездка до магазина (доля): 18:59-18:59 (0мин, 0.5 км)",
+          "Закупка: 19:16-19:17 (0мин)",
+          "Поездка до Объект 3: 19:17-19:17 (0мин, 1.0 км)",
+          "Поездка до магазина (доля): 19:16-19:16 (0мин, 1.0 км)",
+          "Простой: 19:17-19:17 (0мин)",
+          "Закупка: 19:41-19:41 (0мин)",
+          "Поездка до магазина (доля): 19:41-19:41 (0мин, 0.5 км)"
+        ]
+      },
+      "Объект 2": {
+        "project_id": 2,
+        "time_minutes": 0.0,
+        "distance_km": 2.166666666666667,
+        "activities_summary": [
+          "Закупка: 18:55-18:55 (0мин)",
+          "Поездка до магазина (доля): 18:55-18:55 (0мин, 1.7 км)",
+          "Закупка: 19:56-19:56 (0мин)",
+          "Поездка до магазина (доля): 19:55-19:55 (0мин, 0.5 км)"
+        ]
+      },
+      "Заправка": {
+        "project_id": 5,
+        "time_minutes": 0,
+        "distance_km": 1.0,
+        "activities_summary": [
+          "Поездка до Заправка: 19:41-19:41 (0мин, 1.0 км)"
+        ]
+      }
+    },
+    "vehicle_totals": {
+      "Skoda": {
+        "time_minutes": 15.030893949999998,
+        "distance_km": 36.0,
+        "trips_count": 7
+      },
+      "Fiat Ducato": {
+        "time_minutes": 2.675414983333333,
+        "distance_km": 12.0,
+        "trips_count": 3
+      }
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "vehicles": {
+    "Skoda Octavia 1.6": {
+      "fuel_consumption_per_100km": 12,
+      "tank_capacity": 55.0,
+      "current_fuel_level": 31.625000000000007,
+      "total_fuel_cost_in_tank": 1581.25,
+      "current_mileage": 150000,
+      "last_updated": "2025-07-21T16:23:17.999616"
+    },
+    "Fiat Ducato 2.3D": {
+      "fuel_consumption_per_100km": 10,
+      "tank_capacity": 90.0,
+      "current_fuel_level": 40.0,
+      "total_fuel_cost_in_tank": 2000.0,
+      "current_mileage": 89000,
+      "last_updated": "2025-07-21T15:55:06.507101"
+    },
+    "Honda Civic 1.4}": {
+      "fuel_consumption_per_100km": 8.5,
+      "tank_capacity": 52.0,
+      "current_fuel_level": 45.0,
+      "total_fuel_cost_in_tank": 2500.0,
+      "current_mileage": 200000,
+      "last_updated": "2025-07-21T15:55:06.507103"
+    }
+  },
+  "admin_users": [
+    924447690,
+    7402502266
+  ],
+  "fuel_control": {
+    "low_fuel_warning_threshold_percent": 15.0,
+    "critical_fuel_threshold_percent": 5.0,
+    "enable_fuel_tracking": true,
+    "auto_update_fuel_on_refuel": true,
+    "show_detailed_fuel_info": false
+  },
+  "general": {
+    "default_fuel_efficiency_tolerance": 1.1
+  }
+}
