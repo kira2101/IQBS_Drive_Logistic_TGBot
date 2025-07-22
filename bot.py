@@ -8,11 +8,12 @@ from telegram.ext import Application, CommandHandler, CallbackQueryHandler, Mess
 from dotenv import load_dotenv
 
 from database import get_db_session, create_tables
-from models import Project
+from models import Project, Trip
 from state_manager import StateManager
 from report_generator import ReportGenerator
 from settings import get_settings
 from fuel_controller import get_fuel_controller
+from user_activity_logger import get_activity_logger
 
 load_dotenv()
 
@@ -28,9 +29,14 @@ async def start_day(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Start a new working day"""
     db = get_db_session()
     state_manager = StateManager(db)
+    activity_logger = get_activity_logger()
     
     try:
         user = update.effective_user
+        
+        # Логируем команду
+        activity_logger.log_bot_command(user.id, "start_day", {"username": user.username})
+        
         state_manager.create_or_get_user(
             user.id, user.username, user.first_name, user.last_name
         )
@@ -38,6 +44,7 @@ async def start_day(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # Check if working day already started
         active_working_day = state_manager.get_active_working_day(user.id)
         if active_working_day:
+            activity_logger.log_bot_command(user.id, "start_day", {}, False, "Working day already started")
             await update.message.reply_text(
                 f"Рабочий день уже начат в {active_working_day.start_time.strftime('%H:%M')}\n"
                 f"Используйте /start_trip для начала нового рейса."
@@ -69,9 +76,13 @@ async def start_trip(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Start a new trip"""
     db = get_db_session()
     state_manager = StateManager(db)
+    activity_logger = get_activity_logger()
     
     try:
         user = update.effective_user
+        
+        # Логируем команду
+        activity_logger.log_bot_command(user.id, "start_trip")
         
         # Check if working day is active
         active_working_day = state_manager.get_active_working_day(user.id)
@@ -112,9 +123,13 @@ async def drive_to(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Start a trip to a destination"""
     db = get_db_session()
     state_manager = StateManager(db)
+    activity_logger = get_activity_logger()
     
     try:
         user = update.effective_user
+        
+        # Логируем команду
+        activity_logger.log_bot_command(user.id, "drive_to")
         
         # Check if work day is active
         active_day = state_manager.get_active_work_day(user.id)
@@ -260,9 +275,13 @@ async def work_on(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Start working on a project"""
     db = get_db_session()
     state_manager = StateManager(db)
+    activity_logger = get_activity_logger()
     
     try:
         user = update.effective_user
+        
+        # Логируем команду
+        activity_logger.log_bot_command(user.id, "work_on")
         
         # Check if work day is active
         active_day = state_manager.get_active_work_day(user.id)
@@ -311,9 +330,14 @@ async def end_activity(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """End current activity"""
     db = get_db_session()
     state_manager = StateManager(db)
+    activity_logger = get_activity_logger()
     
     try:
         user = update.effective_user
+        
+        # Логируем команду
+        activity_logger.log_bot_command(user.id, "end_activity")
+        
         current_state = state_manager.get_user_state(user.id)
         
         if current_state == 'shopping':
@@ -325,6 +349,20 @@ async def end_activity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         elif current_state == 'working':
             activity = state_manager.end_work(user.id)
             project = db.query(Project).filter(Project.id == activity.project_id).first()
+            
+            # Логируем активность
+            work_day = state_manager.get_active_work_day(user.id)
+            if work_day and project:
+                activity_logger.log_activity(
+                    user.id,
+                    work_day.id,
+                    activity.id,
+                    'working',
+                    project.id,
+                    project.name,
+                    activity.duration_minutes
+                )
+            
             await update.message.reply_text(
                 f"Работа на {project.name} завершена. Время: {activity.duration_minutes} минут.\n\n"
                 f"Доступные команды:\n/drive_to - Поехать в другое место"
@@ -340,9 +378,13 @@ async def end_trip(update: Update, context: ContextTypes.DEFAULT_TYPE):
     db = get_db_session()
     state_manager = StateManager(db)
     report_generator = ReportGenerator(db)
+    activity_logger = get_activity_logger()
     
     try:
         user = update.effective_user
+        
+        # Логируем команду
+        activity_logger.log_bot_command(user.id, "end_trip")
         
         # Get the current work day (trip) for report generation
         work_day = state_manager.get_active_work_day(user.id)
@@ -350,8 +392,16 @@ async def end_trip(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text("Нет активного рейса.")
             return
         
+        # Рассчитываем общую статистику для логирования
+        trips = db.query(Trip).filter(Trip.work_day_id == work_day.id).all()
+        total_distance = sum(trip.distance_km for trip in trips if trip.distance_km)
+        duration_minutes = (datetime.now() - work_day.start_time).total_seconds() / 60
+        
         # End the current work day (trip) and generate report
         ended_work_day = state_manager.end_work_day(user.id)
+        
+        # Логируем окончание рабочей сессии
+        activity_logger.log_work_session_end(user.id, work_day.id, total_distance, duration_minutes)
         
         # Generate report
         report = report_generator.generate_daily_report(ended_work_day)
@@ -364,6 +414,50 @@ async def end_trip(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     finally:
         db.close()
+
+async def view_activity_log(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """View user activity log for today"""
+    try:
+        user = update.effective_user
+        activity_logger = get_activity_logger()
+        
+        # Логируем команду
+        activity_logger.log_bot_command(user.id, "view_activity_log")
+        
+        # Получаем лог за сегодня
+        from datetime import date
+        today = date.today()
+        day_log = activity_logger.get_user_day_log(user.id, today)
+        
+        if day_log["total_actions"] == 0:
+            await update.message.reply_text("За сегодня пока нет активности.")
+            return
+        
+        # Формируем отчет
+        message = f"📊 *Лог активности за {today.strftime('%d.%m.%Y')}*\n\n"
+        
+        message += f"📊 Всего действий: {day_log['total_actions']}\n"
+        message += f"🚗 Рабочих сессий: {day_log['work_sessions']}\n"
+        message += f"🚙 Поездок: {day_log['trips']}\n"
+        message += f"🔨 Активностей: {day_log['activities']}\n"
+        
+        if day_log["has_errors"]:
+            message += f"⚠️ В логе есть ошибки\n"
+        
+        # Команды
+        if day_log["commands_used"]:
+            message += f"\n🤖 *Использованные команды:*\n"
+            message += ", ".join([f"/{cmd}" for cmd in day_log["commands_used"]])
+        
+        # Ссылка на полный лог
+        if day_log.get("log_file_path"):
+            message += f"\n\n📄 *Полный лог:* `{day_log['log_file_path']}`"
+        
+        await update.message.reply_text(message, parse_mode='Markdown')
+        
+    except Exception as e:
+        logger.error(f"Error viewing activity log: {e}")
+        await update.message.reply_text(f"Ошибка при получении лога: {str(e)}")
 
 async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle callback queries from inline keyboards"""
@@ -498,6 +592,11 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         elif data.startswith('vehicle:'):
             vehicle = data.split(':')[1]
             work_day = state_manager.start_work_day(user.id, vehicle)
+            
+            # Логируем начало рабочей сессии
+            activity_logger = get_activity_logger()
+            activity_logger.log_work_session_start(user.id, vehicle, work_day.id)
+            
             await query.edit_message_text(
                 f"Рейс начат в {work_day.start_time.strftime('%H:%M')} на {vehicle}!\n"
                 f"Используйте /drive_to для начала поездки."
@@ -805,6 +904,30 @@ async def end_day(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # Save day report as JSON
         report_generator.save_day_report_json(work_days)
         
+        # Send daily report to webhook if configured
+        try:
+            from webhook_manager import get_webhook_manager
+            webhook_manager = get_webhook_manager()
+            
+            # Get the JSON report data for webhook
+            report_data = report_generator.get_day_report_data(work_days)
+            
+            # Prepare user info
+            user_info = {
+                "telegram_id": user.id,
+                "first_name": user.first_name,
+                "username": user.username,
+                "full_name": user.full_name
+            }
+            
+            webhook_success = webhook_manager.send_daily_report(report_data, user_info)
+            if webhook_success:
+                logger.info(f"Daily report sent to webhook for user {user.first_name or user.username}")
+            else:
+                logger.warning(f"Failed to send daily report to webhook for user {user.first_name or user.username}")
+        except Exception as e:
+            logger.error(f"Error sending daily report to webhook: {e}")
+        
         # Check fuel levels at end of day and send warnings if needed
         fuel_warnings = _check_daily_fuel_warnings(work_days)
         
@@ -916,6 +1039,21 @@ async def handle_distance_input(update, db, state_manager, user):
         trip_state_data = state_manager.get_user_state_data(user.id)
         
         trip = state_manager.end_trip(user.id, distance)
+        
+        # Логируем поездку
+        work_day = state_manager.get_active_work_day(user.id)
+        if work_day:
+            activity_logger = get_activity_logger()
+            activity_logger.log_trip(
+                user.id, 
+                work_day.id, 
+                trip.id,
+                trip.start_location or "Текущее местоположение",
+                trip.end_location or "Неизвестно",
+                distance,
+                trip.project_id,
+                trip.project.name if trip.project else None
+            )
         
         # Post arrival comment if this was a CRM object
         if trip_state_data and trip_state_data.get('crm_object_id'):
@@ -1556,6 +1694,7 @@ def main():
     application.add_handler(CommandHandler("idle_time", idle_time))
     application.add_handler(CommandHandler("end_idle_time", end_idle_time))
     application.add_handler(CommandHandler("fuel_status", fuel_status))
+    application.add_handler(CommandHandler("activity_log", view_activity_log))
     application.add_handler(CommandHandler("help", help_command))
     
     application.add_handler(CallbackQueryHandler(handle_callback))

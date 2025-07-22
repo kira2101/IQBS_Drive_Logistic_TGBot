@@ -232,13 +232,45 @@ class Settings:
     def get_max_cache_entries_per_user(self) -> int:
         """Get maximum cache entries per user"""
         return self.get_cache_settings().get("max_cache_entries_per_user", 10)
+    
+    def get_webhook_settings(self) -> Dict:
+        """Получить конфигурацию вебхуков"""
+        return self._settings.get("webhook_settings", {})
+    
+    def get_daily_report_webhook_url(self) -> str:
+        """Получить URL вебхука для дневных отчетов"""
+        return self.get_webhook_settings().get("daily_report_webhook_url", "")
+    
+    def is_webhook_sending_enabled(self) -> bool:
+        """Проверить, включена ли отправка вебхуков"""
+        return self.get_webhook_settings().get("enable_webhook_sending", True)
+    
+    def get_webhook_timeout_seconds(self) -> int:
+        """Получить таймаут запроса вебхука в секундах"""
+        return self.get_webhook_settings().get("webhook_timeout_seconds", 30)
+    
+    def get_webhook_retry_attempts(self) -> int:
+        """Получить количество попыток повтора вебхука"""
+        return self.get_webhook_settings().get("webhook_retry_attempts", 3)
+    
+    def get_work_cost_settings(self) -> Dict:
+        """Получить настройки стоимости работы"""
+        return self._settings.get("work_cost", {})
+    
+    def get_price_per_hour(self) -> float:
+        """Получить стоимость часа работы"""
+        return self.get_work_cost_settings().get("price_per_hour", 500.0)
+    
+    def get_work_currency(self) -> str:
+        """Получить валюту для стоимости работы"""
+        return self.get_work_cost_settings().get("currency", "UAH")
 
     def reload_settings(self):
         """Reload settings from file"""
         self.load_settings()
-        logger.info("Settings reloaded")
+        logger.info("Настройки перезагружены")
 
-# Global settings instance
+# Глобальный экземпляр настроек
 _settings_instance = None
 
 def get_settings() -> Settings:

@@ -3,26 +3,26 @@
     "Skoda Octavia 1.6": {
       "fuel_consumption_per_100km": 12,
       "tank_capacity": 55.0,
-      "current_fuel_level": 14.185000000000006,
-      "total_fuel_cost_in_tank": 709.2500000000005,
+      "current_fuel_level": 8.18500000000001,
+      "total_fuel_cost_in_tank": 409.25000000000045,
       "current_mileage": 150000,
-      "last_updated": "2025-07-22T00:17:19.943887"
+      "last_updated": "2025-07-22T13:27:22.206295"
     },
     "Fiat Ducato 2.3D": {
       "fuel_consumption_per_100km": 10,
       "tank_capacity": 90.0,
-      "current_fuel_level": 14.5,
-      "total_fuel_cost_in_tank": 725.0,
+      "current_fuel_level": 8.5,
+      "total_fuel_cost_in_tank": 425.0,
       "current_mileage": 89000,
-      "last_updated": "2025-07-21T18:50:30.237903"
+      "last_updated": "2025-07-22T00:49:20.412287"
     },
     "Honda Civic 1.4}": {
       "fuel_consumption_per_100km": 8.5,
       "tank_capacity": 52.0,
-      "current_fuel_level": 45.0,
-      "total_fuel_cost_in_tank": 2500.0,
+      "current_fuel_level": 44.15,
+      "total_fuel_cost_in_tank": 2452.777777777778,
       "current_mileage": 200000,
-      "last_updated": "2025-07-21T15:55:06.507103"
+      "last_updated": "2025-07-22T13:36:25.249955"
     }
   },
   "admin_users": [
@@ -60,5 +60,15 @@
     "cache_warning_age_hours": 2,
     "auto_refresh_on_stale": false,
     "max_cache_entries_per_user": 10
+  },
+  "webhook_settings": {
+    "daily_report_webhook_url": "https://iqbs.app.n8n.cloud/webhook-test/e9dea339-cd79-42a9-925b-ea7371aa5e94",
+    "enable_webhook_sending": true,
+    "webhook_timeout_seconds": 30,
+    "webhook_retry_attempts": 3
+  },
+  "work_cost": {
+    "price_per_hour": 187,
+    "currency": "UAH"
   }
 }

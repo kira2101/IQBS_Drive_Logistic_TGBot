@@ -22,7 +22,7 @@ class ReportGenerator:
         idle_times = self.db.query(IdleTime).filter(IdleTime.work_day_id == work_day.id).all()
         
         # Calculate totals per project
-        project_totals = self._calculate_project_totals(activities, trips, shopping_sessions, idle_times)
+        project_totals = self._calculate_project_totals(activities, trips, shopping_sessions, idle_times, work_day)
         
         # Calculate fuel consumption for this trip
         fuel_data = self._calculate_trip_fuel_consumption(work_day, trips)
@@ -80,10 +80,17 @@ class ReportGenerator:
         return report
     
     def _calculate_project_totals(self, activities: List[Activity], trips: List[Trip], 
-                                 shopping_sessions: List[ShoppingSession], idle_times: List[IdleTime]) -> Dict[int, Dict]:
-        """Calculate totals per project with proper cost distribution"""
+                                 shopping_sessions: List[ShoppingSession], idle_times: List[IdleTime],
+                                 work_day: WorkDay = None) -> Dict[int, Dict]:
+        """Рассчитать итоги по проекту с правильным распределением затрат"""
         
         project_totals = {}
+        fuel_controller = get_fuel_controller()
+        
+        # Получаем стоимость часа работы
+        from settings import get_settings
+        settings = get_settings()
+        price_per_hour = settings.get_price_per_hour()
         
         # Add activities (work and shopping time)
         for activity in activities:
@@ -91,10 +98,14 @@ class ReportGenerator:
                 project_totals[activity.project_id] = {
                     'time_minutes': 0,
                     'distance_km': 0.0,
+                    'fuel_consumed_liters': 0.0,
+                    'fuel_cost': 0.0,
+                    'time_cost': 0.0,
                     'activities': []
                 }
             
             project_totals[activity.project_id]['time_minutes'] += activity.duration_minutes
+            project_totals[activity.project_id]['time_cost'] += (activity.duration_minutes / 60.0) * price_per_hour
             
             activity_type = 'Работа' if activity.activity_type == 'working' else 'Закупка'
             time_range = f"{activity.start_time.strftime('%H:%M')}-{activity.end_time.strftime('%H:%M')}" if activity.end_time else f"{activity.start_time.strftime('%H:%M')}-"
@@ -109,11 +120,23 @@ class ReportGenerator:
                     project_totals[trip.project_id] = {
                         'time_minutes': 0,
                         'distance_km': 0.0,
+                        'fuel_consumed_liters': 0.0,
+                        'fuel_cost': 0.0,
+                        'time_cost': 0.0,
                         'activities': []
                     }
                 
                 project_totals[trip.project_id]['time_minutes'] += trip.duration_minutes
                 project_totals[trip.project_id]['distance_km'] += trip.distance_km
+                project_totals[trip.project_id]['time_cost'] += (trip.duration_minutes / 60.0) * price_per_hour
+                
+                # Рассчитываем топливо для этой поездки
+                if work_day and work_day.vehicle and trip.distance_km > 0:
+                    trip_fuel_consumed = fuel_controller.calculate_fuel_consumption(work_day.vehicle, trip.distance_km)
+                    trip_fuel_cost = trip_fuel_consumed * fuel_controller.calculate_average_fuel_price_per_liter(work_day.vehicle)
+                    
+                    project_totals[trip.project_id]['fuel_consumed_liters'] += trip_fuel_consumed
+                    project_totals[trip.project_id]['fuel_cost'] += trip_fuel_cost
                 
                 trip_time_range = f"{trip.start_time.strftime('%H:%M')}-{trip.end_time.strftime('%H:%M')}" if trip.end_time else f"{trip.start_time.strftime('%H:%M')}-"
                 project_totals[trip.project_id]['activities'].append(
@@ -132,20 +155,37 @@ class ReportGenerator:
                     shopping_projects.update(project_ids)
             
             if shopping_projects:
-                # Distribute trip time and distance equally among shopping projects
+                # Распределяем время, расстояние и топливо поровну между проектами для закупок
                 time_per_project = trip.duration_minutes / len(shopping_projects)
                 distance_per_project = trip.distance_km / len(shopping_projects)
+                
+                # Рассчитываем топливо для магазинной поездки
+                trip_fuel_consumed = 0
+                trip_fuel_cost = 0
+                if work_day and work_day.vehicle and trip.distance_km > 0:
+                    trip_fuel_consumed = fuel_controller.calculate_fuel_consumption(work_day.vehicle, trip.distance_km)
+                    trip_fuel_cost = trip_fuel_consumed * fuel_controller.calculate_average_fuel_price_per_liter(work_day.vehicle)
+                
+                fuel_per_project = trip_fuel_consumed / len(shopping_projects)
+                fuel_cost_per_project = trip_fuel_cost / len(shopping_projects)
+                time_cost_per_project = (time_per_project / 60.0) * price_per_hour
                 
                 for project_id in shopping_projects:
                     if project_id not in project_totals:
                         project_totals[project_id] = {
                             'time_minutes': 0,
                             'distance_km': 0.0,
+                            'fuel_consumed_liters': 0.0,
+                            'fuel_cost': 0.0,
+                            'time_cost': 0.0,
                             'activities': []
                         }
                     
                     project_totals[project_id]['time_minutes'] += time_per_project
                     project_totals[project_id]['distance_km'] += distance_per_project
+                    project_totals[project_id]['fuel_consumed_liters'] += fuel_per_project
+                    project_totals[project_id]['fuel_cost'] += fuel_cost_per_project
+                    project_totals[project_id]['time_cost'] += time_cost_per_project
                     
                     trip_time_range = f"{trip.start_time.strftime('%H:%M')}-{trip.end_time.strftime('%H:%M')}" if trip.end_time else f"{trip.start_time.strftime('%H:%M')}-"
                     project_totals[project_id]['activities'].append(
@@ -157,15 +197,17 @@ class ReportGenerator:
                                (('Дом' in (t.end_location or '')) or ('Склад' in (t.end_location or '')))]
         
         for trip in home_warehouse_trips:
-            # Get all active projects for this work day (projects with activities, trips, or shopping)
+            # Get active projects ТОЛЬКО для этого конкретного work_day (машины)
+            # Поездки домой должны распределяться только среди проектов той же машины
             active_projects = set()
             
+            # Получаем проекты только из переданных данных (уже отфильтрованы по work_day)
             # Add projects from activities
             for activity in activities:
                 if activity.project_id:
                     active_projects.add(activity.project_id)
             
-            # Add projects from trips (excluding static object trips)
+            # Add projects from trips (excluding home/warehouse/fuel trips)
             for t in trips:
                 if t.project_id:
                     active_projects.add(t.project_id)
@@ -177,9 +219,20 @@ class ReportGenerator:
                     active_projects.update(project_ids)
             
             if active_projects:
-                # Distribute trip time and distance equally among active projects
+                # Распределяем время, расстояние и топливо поровну между активными проектами
                 time_per_project = trip.duration_minutes / len(active_projects)
                 distance_per_project = trip.distance_km / len(active_projects)
+                
+                # Рассчитываем топливо для поездки домой/на склад
+                trip_fuel_consumed = 0
+                trip_fuel_cost = 0
+                if work_day and work_day.vehicle and trip.distance_km > 0:
+                    trip_fuel_consumed = fuel_controller.calculate_fuel_consumption(work_day.vehicle, trip.distance_km)
+                    trip_fuel_cost = trip_fuel_consumed * fuel_controller.calculate_average_fuel_price_per_liter(work_day.vehicle)
+                
+                fuel_per_project = trip_fuel_consumed / len(active_projects)
+                fuel_cost_per_project = trip_fuel_cost / len(active_projects)
+                time_cost_per_project = (time_per_project / 60.0) * price_per_hour
                 
                 destination_name = "дома" if 'Дом' in trip.end_location else "склада"
                 
@@ -188,11 +241,17 @@ class ReportGenerator:
                         project_totals[project_id] = {
                             'time_minutes': 0,
                             'distance_km': 0.0,
+                            'fuel_consumed_liters': 0.0,
+                            'fuel_cost': 0.0,
+                            'time_cost': 0.0,
                             'activities': []
                         }
                     
                     project_totals[project_id]['time_minutes'] += time_per_project
                     project_totals[project_id]['distance_km'] += distance_per_project
+                    project_totals[project_id]['fuel_consumed_liters'] += fuel_per_project
+                    project_totals[project_id]['fuel_cost'] += fuel_cost_per_project
+                    project_totals[project_id]['time_cost'] += time_cost_per_project
                     
                     trip_time_range = f"{trip.start_time.strftime('%H:%M')}-{trip.end_time.strftime('%H:%M')}" if trip.end_time else f"{trip.start_time.strftime('%H:%M')}-"
                     project_totals[project_id]['activities'].append(
@@ -203,9 +262,10 @@ class ReportGenerator:
         fuel_station_trips = [t for t in trips if not t.project_id and 'Заправка' in (t.end_location or '')]
         
         for trip in fuel_station_trips:
-            # Get ALL available projects for this work day (including idle time projects)
+            # Get available projects ТОЛЬКО для этого конкретного work_day (машины)
             all_available_projects = set()
             
+            # Получаем проекты только из переданных данных (уже отфильтрованы по work_day)
             # Add projects from activities
             for activity in activities:
                 if activity.project_id:
@@ -229,20 +289,37 @@ class ReportGenerator:
                     all_available_projects.update(project_ids)
             
             if all_available_projects:
-                # Distribute trip time and distance equally among all available projects
+                # Распределяем время, расстояние и топливо поровну между всеми доступными проектами
                 time_per_project = trip.duration_minutes / len(all_available_projects)
                 distance_per_project = trip.distance_km / len(all_available_projects)
+                
+                # Рассчитываем топливо для поездки на заправку
+                trip_fuel_consumed = 0
+                trip_fuel_cost = 0
+                if work_day and work_day.vehicle and trip.distance_km > 0:
+                    trip_fuel_consumed = fuel_controller.calculate_fuel_consumption(work_day.vehicle, trip.distance_km)
+                    trip_fuel_cost = trip_fuel_consumed * fuel_controller.calculate_average_fuel_price_per_liter(work_day.vehicle)
+                
+                fuel_per_project = trip_fuel_consumed / len(all_available_projects)
+                fuel_cost_per_project = trip_fuel_cost / len(all_available_projects)
+                time_cost_per_project = (time_per_project / 60.0) * price_per_hour
                 
                 for project_id in all_available_projects:
                     if project_id not in project_totals:
                         project_totals[project_id] = {
                             'time_minutes': 0,
                             'distance_km': 0.0,
+                            'fuel_consumed_liters': 0.0,
+                            'fuel_cost': 0.0,
+                            'time_cost': 0.0,
                             'activities': []
                         }
                     
                     project_totals[project_id]['time_minutes'] += time_per_project
                     project_totals[project_id]['distance_km'] += distance_per_project
+                    project_totals[project_id]['fuel_consumed_liters'] += fuel_per_project
+                    project_totals[project_id]['fuel_cost'] += fuel_cost_per_project
+                    project_totals[project_id]['time_cost'] += time_cost_per_project
                     
                     trip_time_range = f"{trip.start_time.strftime('%H:%M')}-{trip.end_time.strftime('%H:%M')}" if trip.end_time else f"{trip.start_time.strftime('%H:%M')}-"
                     project_totals[project_id]['activities'].append(
@@ -256,16 +333,21 @@ class ReportGenerator:
                 if project_ids:
                     # Distribute idle time equally among projects
                     time_per_project = idle_time.duration_minutes / len(project_ids)
+                    time_cost_per_project = (time_per_project / 60.0) * price_per_hour
                     
                     for project_id in project_ids:
                         if project_id not in project_totals:
                             project_totals[project_id] = {
                                 'time_minutes': 0,
                                 'distance_km': 0.0,
+                                'fuel_consumed_liters': 0.0,
+                                'fuel_cost': 0.0,
+                                'time_cost': 0.0,
                                 'activities': []
                             }
                         
                         project_totals[project_id]['time_minutes'] += time_per_project
+                        project_totals[project_id]['time_cost'] += time_cost_per_project
                         idle_time_range = f"{idle_time.start_time.strftime('%H:%M')}-{idle_time.end_time.strftime('%H:%M')}" if idle_time.end_time else f"{idle_time.start_time.strftime('%H:%M')}-"
                         project_totals[project_id]['activities'].append(
                             f"Простой: {idle_time_range} ({self._format_minutes(time_per_project)})"
@@ -312,7 +394,7 @@ class ReportGenerator:
                 total_distance += trip_distance
                 
                 # Calculate project totals for this trip
-                trip_project_totals = self._calculate_project_totals(activities, trips, shopping_sessions, idle_times)
+                trip_project_totals = self._calculate_project_totals(activities, trips, shopping_sessions, idle_times, work_day)
                 
                 # Accumulate project totals across all trips
                 for project_id, data in trip_project_totals.items():
@@ -456,6 +538,211 @@ class ReportGenerator:
         # Implementation for project-specific reports
         pass
     
+    def get_day_report_data(self, work_days: List[WorkDay]) -> dict:
+        """Get comprehensive day report data as dictionary (for webhook sending)"""
+        if not work_days:
+            return {}
+        
+        return self._build_day_report_data(work_days)
+    
+    def _build_day_report_data(self, work_days: List[WorkDay]) -> dict:
+        """Build comprehensive day report data structure"""
+        json_data = {
+            "report_type": "day_report",
+            "report_date": work_days[0].date.strftime('%Y-%m-%d'),
+            "user_id": work_days[0].user_id,
+            "total_trips": len(work_days),
+            "trips": []
+        }
+        
+        total_time = 0
+        total_distance = 0
+        all_project_totals = {}
+        vehicle_totals = {}
+        total_idle_time = 0
+        
+        for work_day in work_days:
+            if work_day.end_time:
+                trip_time = (work_day.end_time - work_day.start_time).total_seconds() / 60
+                total_time += trip_time
+                
+                # Get all data for this work day
+                activities = self.db.query(Activity).filter(Activity.work_day_id == work_day.id).all()
+                trips = self.db.query(Trip).filter(Trip.work_day_id == work_day.id).all()
+                shopping_sessions = self.db.query(ShoppingSession).filter(ShoppingSession.work_day_id == work_day.id).all()
+                idle_times = self.db.query(IdleTime).filter(IdleTime.work_day_id == work_day.id).all()
+                
+                trip_distance = sum(trip.distance_km for trip in trips if trip.distance_km)
+                total_distance += trip_distance
+                
+                # Calculate project totals for this trip
+                project_totals = self._calculate_project_totals(activities, trips, shopping_sessions, idle_times, work_day)
+                
+                # Calculate fuel consumption for this trip
+                trip_fuel_data = self._calculate_trip_fuel_consumption(work_day, trips)
+                
+                # Prepare trip data with all details
+                trip_data = {
+                    "trip_id": work_day.id,
+                    "vehicle": work_day.vehicle,
+                    "start_time": work_day.start_time.isoformat(),
+                    "end_time": work_day.end_time.isoformat(),
+                    "duration_minutes": trip_time,
+                    "distance_km": trip_distance,
+                    "fuel_consumption": trip_fuel_data,
+                    "project_totals": {},
+                    "activities": [],
+                    "trips": [],
+                    "shopping_sessions": [],
+                    "idle_times": []
+                }
+                
+                # Get bulk CRM metadata for all projects (optimization)
+                project_ids = list(project_totals.keys())
+                bulk_crm_metadata = self._get_bulk_crm_metadata_for_projects(project_ids, work_day.user_id)
+                
+                # Add project totals with names
+                for project_id, data in project_totals.items():
+                    project = self.db.query(Project).filter(Project.id == project_id).first()
+                    project_name = project.name if project else f"Project {project_id}"
+                    # Get CRM metadata from bulk fetch
+                    crm_metadata = bulk_crm_metadata.get(project_id, {"source": "static"})
+                    
+                    trip_data["project_totals"][project_name] = {
+                        "project_id": project_id,
+                        "time_minutes": data['time_minutes'],
+                        "distance_km": data['distance_km'],
+                        "fuel_consumed_liters": data.get('fuel_consumed_liters', 0.0),
+                        "fuel_cost": data.get('fuel_cost', 0.0),
+                        "time_cost": data.get('time_cost', 0.0),
+                        "activities_summary": data['activities'],
+                        "crm_metadata": crm_metadata
+                    }
+                    
+                    # Accumulate for day totals
+                    if project_name not in all_project_totals:
+                        all_project_totals[project_name] = {
+                            "project_id": project_id,
+                            "time_minutes": 0,
+                            "distance_km": 0,
+                            "fuel_consumed_liters": 0.0,
+                            "fuel_cost": 0.0,
+                            "time_cost": 0.0,
+                            "activities_summary": [],
+                            "crm_metadata": crm_metadata
+                        }
+                    all_project_totals[project_name]["time_minutes"] += data['time_minutes']
+                    all_project_totals[project_name]["distance_km"] += data['distance_km']
+                    all_project_totals[project_name]["fuel_consumed_liters"] += data.get('fuel_consumed_liters', 0.0)
+                    all_project_totals[project_name]["fuel_cost"] += data.get('fuel_cost', 0.0)
+                    all_project_totals[project_name]["time_cost"] += data.get('time_cost', 0.0)
+                    all_project_totals[project_name]["activities_summary"].extend(data['activities'])
+                
+                # Vehicle totals
+                vehicle = work_day.vehicle or 'Не указан'
+                if vehicle not in vehicle_totals:
+                    vehicle_totals[vehicle] = {
+                        "time_minutes": 0,
+                        "distance_km": 0,
+                        "trips_count": 0
+                    }
+                vehicle_totals[vehicle]["time_minutes"] += trip_time
+                vehicle_totals[vehicle]["distance_km"] += trip_distance
+                vehicle_totals[vehicle]["trips_count"] += 1
+                
+                # Accumulate idle time
+                for idle_time in idle_times:
+                    total_idle_time += idle_time.duration_minutes
+                
+                # Add detailed activities
+                for activity in activities:
+                    project = self.db.query(Project).filter(Project.id == activity.project_id).first()
+                    trip_data["activities"].append({
+                        "id": activity.id,
+                        "project_id": activity.project_id,
+                        "project_name": project.name if project else f"Project {activity.project_id}",
+                        "activity_type": activity.activity_type,
+                        "start_time": activity.start_time.isoformat(),
+                        "end_time": activity.end_time.isoformat() if activity.end_time else None,
+                        "duration_minutes": activity.duration_minutes,
+                        "description": activity.description
+                    })
+                
+                # Add detailed trips
+                for trip in trips:
+                    project = None
+                    if trip.project_id:
+                        project = self.db.query(Project).filter(Project.id == trip.project_id).first()
+                    
+                    trip_data["trips"].append({
+                        "id": trip.id,
+                        "project_id": trip.project_id,
+                        "project_name": project.name if project else None,
+                        "start_location": trip.start_location,
+                        "end_location": trip.end_location,
+                        "start_time": trip.start_time.isoformat(),
+                        "end_time": trip.end_time.isoformat() if trip.end_time else None,
+                        "distance_km": trip.distance_km,
+                        "duration_minutes": trip.duration_minutes
+                    })
+                
+                # Add shopping sessions
+                for session in shopping_sessions:
+                    project_ids = json.loads(session.projects_data) if session.projects_data else []
+                    project_names = []
+                    for pid in project_ids:
+                        if pid == 'warehouse':
+                            project_names.append('Склад')
+                        else:
+                            project = self.db.query(Project).filter(Project.id == pid).first()
+                            project_names.append(project.name if project else f"Project {pid}")
+                    
+                    trip_data["shopping_sessions"].append({
+                        "id": session.id,
+                        "project_ids": project_ids,
+                        "project_names": project_names,
+                        "start_time": session.start_time.isoformat(),
+                        "end_time": session.end_time.isoformat() if session.end_time else None,
+                        "duration_minutes": session.duration_minutes
+                    })
+                
+                # Add idle times
+                for idle_time in idle_times:
+                    project_ids = json.loads(idle_time.project_ids) if idle_time.project_ids else []
+                    project_names = []
+                    for pid in project_ids:
+                        project = self.db.query(Project).filter(Project.id == pid).first()
+                        project_names.append(project.name if project else f"Project {pid}")
+                    
+                    trip_data["idle_times"].append({
+                        "id": idle_time.id,
+                        "project_ids": project_ids,
+                        "project_names": project_names,
+                        "start_time": idle_time.start_time.isoformat(),
+                        "end_time": idle_time.end_time.isoformat() if idle_time.end_time else None,
+                        "duration_minutes": idle_time.duration_minutes
+                    })
+                
+                json_data["trips"].append(trip_data)
+        
+        # Calculate fuel data for JSON report
+        fuel_data_for_json = self._calculate_day_fuel_consumption(work_days)
+        
+        # Add day totals
+        json_data["totals"] = {
+            "total_time_minutes": total_time,
+            "total_distance_km": total_distance,
+            "total_idle_time_minutes": total_idle_time,
+            "project_totals": all_project_totals,
+            "vehicle_totals": vehicle_totals,
+            "fuel_consumption_by_vehicle": fuel_data_for_json
+        }
+        
+        # Создать секцию for_excel для экспорта
+        json_data["for_excel"] = self._build_for_excel_section(all_project_totals, work_days)
+        
+        return json_data
+    
     def save_day_report_json(self, work_days: List[WorkDay]):
         """Save comprehensive day report with all trips and details as JSON"""
         try:
@@ -467,187 +754,8 @@ class ReportGenerator:
             if not os.path.exists(reports_dir):
                 os.makedirs(reports_dir)
             
-            json_data = {
-                "report_type": "day_report",
-                "report_date": work_days[0].date.strftime('%Y-%m-%d'),
-                "user_id": work_days[0].user_id,
-                "total_trips": len(work_days),
-                "trips": []
-            }
-            
-            total_time = 0
-            total_distance = 0
-            all_project_totals = {}
-            vehicle_totals = {}
-            total_idle_time = 0
-            
-            for work_day in work_days:
-                if work_day.end_time:
-                    trip_time = (work_day.end_time - work_day.start_time).total_seconds() / 60
-                    total_time += trip_time
-                    
-                    # Get all data for this work day
-                    activities = self.db.query(Activity).filter(Activity.work_day_id == work_day.id).all()
-                    trips = self.db.query(Trip).filter(Trip.work_day_id == work_day.id).all()
-                    shopping_sessions = self.db.query(ShoppingSession).filter(ShoppingSession.work_day_id == work_day.id).all()
-                    idle_times = self.db.query(IdleTime).filter(IdleTime.work_day_id == work_day.id).all()
-                    
-                    trip_distance = sum(trip.distance_km for trip in trips if trip.distance_km)
-                    total_distance += trip_distance
-                    
-                    # Calculate project totals for this trip
-                    project_totals = self._calculate_project_totals(activities, trips, shopping_sessions, idle_times)
-                    
-                    # Calculate fuel consumption for this trip
-                    trip_fuel_data = self._calculate_trip_fuel_consumption(work_day, trips)
-                    
-                    # Prepare trip data with all details
-                    trip_data = {
-                        "trip_id": work_day.id,
-                        "vehicle": work_day.vehicle,
-                        "start_time": work_day.start_time.isoformat(),
-                        "end_time": work_day.end_time.isoformat(),
-                        "duration_minutes": trip_time,
-                        "distance_km": trip_distance,
-                        "fuel_consumption": trip_fuel_data,
-                        "project_totals": {},
-                        "activities": [],
-                        "trips": [],
-                        "shopping_sessions": [],
-                        "idle_times": []
-                    }
-                    
-                    # Get bulk CRM metadata for all projects (optimization)
-                    project_ids = list(project_totals.keys())
-                    bulk_crm_metadata = self._get_bulk_crm_metadata_for_projects(project_ids, work_day.user_id)
-                    
-                    # Add project totals with names
-                    for project_id, data in project_totals.items():
-                        project = self.db.query(Project).filter(Project.id == project_id).first()
-                        project_name = project.name if project else f"Project {project_id}"
-                        # Get CRM metadata from bulk fetch
-                        crm_metadata = bulk_crm_metadata.get(project_id, {"source": "static"})
-                        
-                        trip_data["project_totals"][project_name] = {
-                            "project_id": project_id,
-                            "time_minutes": data['time_minutes'],
-                            "distance_km": data['distance_km'],
-                            "activities_summary": data['activities'],
-                            "crm_metadata": crm_metadata
-                        }
-                        
-                        # Accumulate for day totals
-                        if project_name not in all_project_totals:
-                            all_project_totals[project_name] = {
-                                "project_id": project_id,
-                                "time_minutes": 0,
-                                "distance_km": 0,
-                                "activities_summary": [],
-                                "crm_metadata": crm_metadata
-                            }
-                        all_project_totals[project_name]["time_minutes"] += data['time_minutes']
-                        all_project_totals[project_name]["distance_km"] += data['distance_km']
-                        all_project_totals[project_name]["activities_summary"].extend(data['activities'])
-                    
-                    # Vehicle totals
-                    vehicle = work_day.vehicle or 'Не указан'
-                    if vehicle not in vehicle_totals:
-                        vehicle_totals[vehicle] = {
-                            "time_minutes": 0,
-                            "distance_km": 0,
-                            "trips_count": 0
-                        }
-                    vehicle_totals[vehicle]["time_minutes"] += trip_time
-                    vehicle_totals[vehicle]["distance_km"] += trip_distance
-                    vehicle_totals[vehicle]["trips_count"] += 1
-                    
-                    # Accumulate idle time
-                    for idle_time in idle_times:
-                        total_idle_time += idle_time.duration_minutes
-                    
-                    # Add detailed activities
-                    for activity in activities:
-                        project = self.db.query(Project).filter(Project.id == activity.project_id).first()
-                        trip_data["activities"].append({
-                            "id": activity.id,
-                            "project_id": activity.project_id,
-                            "project_name": project.name if project else f"Project {activity.project_id}",
-                            "activity_type": activity.activity_type,
-                            "start_time": activity.start_time.isoformat(),
-                            "end_time": activity.end_time.isoformat() if activity.end_time else None,
-                            "duration_minutes": activity.duration_minutes,
-                            "description": activity.description
-                        })
-                    
-                    # Add detailed trips
-                    for trip in trips:
-                        project = None
-                        if trip.project_id:
-                            project = self.db.query(Project).filter(Project.id == trip.project_id).first()
-                        
-                        trip_data["trips"].append({
-                            "id": trip.id,
-                            "project_id": trip.project_id,
-                            "project_name": project.name if project else None,
-                            "start_location": trip.start_location,
-                            "end_location": trip.end_location,
-                            "start_time": trip.start_time.isoformat(),
-                            "end_time": trip.end_time.isoformat() if trip.end_time else None,
-                            "distance_km": trip.distance_km,
-                            "duration_minutes": trip.duration_minutes
-                        })
-                    
-                    # Add shopping sessions
-                    for session in shopping_sessions:
-                        project_ids = json.loads(session.projects_data) if session.projects_data else []
-                        project_names = []
-                        for pid in project_ids:
-                            if pid == 'warehouse':
-                                project_names.append('Склад')
-                            else:
-                                project = self.db.query(Project).filter(Project.id == pid).first()
-                                project_names.append(project.name if project else f"Project {pid}")
-                        
-                        trip_data["shopping_sessions"].append({
-                            "id": session.id,
-                            "project_ids": project_ids,
-                            "project_names": project_names,
-                            "start_time": session.start_time.isoformat(),
-                            "end_time": session.end_time.isoformat() if session.end_time else None,
-                            "duration_minutes": session.duration_minutes
-                        })
-                    
-                    # Add idle times
-                    for idle_time in idle_times:
-                        project_ids = json.loads(idle_time.project_ids) if idle_time.project_ids else []
-                        project_names = []
-                        for pid in project_ids:
-                            project = self.db.query(Project).filter(Project.id == pid).first()
-                            project_names.append(project.name if project else f"Project {pid}")
-                        
-                        trip_data["idle_times"].append({
-                            "id": idle_time.id,
-                            "project_ids": project_ids,
-                            "project_names": project_names,
-                            "start_time": idle_time.start_time.isoformat(),
-                            "end_time": idle_time.end_time.isoformat() if idle_time.end_time else None,
-                            "duration_minutes": idle_time.duration_minutes
-                        })
-                    
-                    json_data["trips"].append(trip_data)
-            
-            # Calculate fuel data for JSON report
-            fuel_data_for_json = self._calculate_day_fuel_consumption(work_days)
-            
-            # Add day totals
-            json_data["totals"] = {
-                "total_time_minutes": total_time,
-                "total_distance_km": total_distance,
-                "total_idle_time_minutes": total_idle_time,
-                "project_totals": all_project_totals,
-                "vehicle_totals": vehicle_totals,
-                "fuel_consumption_by_vehicle": fuel_data_for_json
-            }
+            # Get report data
+            json_data = self._build_day_report_data(work_days)
             
             # Save to file
             filename = f"day_report_{work_days[0].date.strftime('%Y%m%d')}.json"
@@ -769,3 +877,77 @@ class ReportGenerator:
             vehicle_fuel_data[vehicle]['fuel_after_liters'] = fuel_status.get('current_fuel_liters', 0)
         
         return vehicle_fuel_data
+    
+    def _build_for_excel_section(self, all_project_totals: Dict, work_days: List[WorkDay]) -> List[Dict]:
+        """Создать секцию for_excel с данными для экспорта в Excel"""
+        excel_data = []
+        
+        # Получаем данные по машинам для каждого проекта только для текущего дня
+        vehicle_project_data = {}
+        
+        for work_day in work_days:
+            if not work_day.vehicle:
+                continue
+                
+            # Получаем данные для этого рабочего дня
+            activities = self.db.query(Activity).filter(Activity.work_day_id == work_day.id).all()
+            trips = self.db.query(Trip).filter(Trip.work_day_id == work_day.id).all()
+            shopping_sessions = self.db.query(ShoppingSession).filter(ShoppingSession.work_day_id == work_day.id).all()
+            idle_times = self.db.query(IdleTime).filter(IdleTime.work_day_id == work_day.id).all()
+            
+            # Получаем итоги по проектам для этой машины
+            project_totals = self._calculate_project_totals(activities, trips, shopping_sessions, idle_times, work_day)
+            
+            for project_id, data in project_totals.items():
+                if project_id not in vehicle_project_data:
+                    vehicle_project_data[project_id] = {}
+                
+                vehicle = work_day.vehicle
+                if vehicle not in vehicle_project_data[project_id]:
+                    vehicle_project_data[project_id][vehicle] = {
+                        'time_minutes': 0,
+                        'fuel_cost': 0.0,
+                        'time_cost': 0.0
+                    }
+                
+                vehicle_project_data[project_id][vehicle]['time_minutes'] += data.get('time_minutes', 0)
+                vehicle_project_data[project_id][vehicle]['fuel_cost'] += data.get('fuel_cost', 0.0)
+                vehicle_project_data[project_id][vehicle]['time_cost'] += data.get('time_cost', 0.0)
+        
+        # Создаем записи для Excel
+        for project_name, project_data in all_project_totals.items():
+            project_id = project_data['project_id']
+            crm_metadata = project_data.get('crm_metadata', {})
+            
+            # Основные данные проекта
+            excel_row = {
+                'object_name': project_name,
+                'remonline_id': crm_metadata.get('crm_id', ''),
+                'status': crm_metadata.get('status_name', ''),
+                'total_fuel_cost': project_data.get('fuel_cost', 0.0),
+                'vehicles': [],
+                'total_costs': project_data.get('fuel_cost', 0.0) + project_data.get('time_cost', 0.0)
+            }
+            
+            # Добавляем данные по машинам, если на объект ездили несколько машин
+            if project_id in vehicle_project_data:
+                for vehicle, vehicle_data in vehicle_project_data[project_id].items():
+                    excel_row['vehicles'].append({
+                        'vehicle': vehicle,
+                        'time_minutes': vehicle_data['time_minutes'],
+                        'time_cost': vehicle_data['time_cost'],
+                        'fuel_cost': vehicle_data['fuel_cost']
+                    })
+            
+            # Если нет данных по машинам, добавляем общие данные
+            if not excel_row['vehicles']:
+                excel_row['vehicles'].append({
+                    'vehicle': 'Общие данные',
+                    'time_minutes': project_data.get('time_minutes', 0),
+                    'time_cost': project_data.get('time_cost', 0.0),
+                    'fuel_cost': project_data.get('fuel_cost', 0.0)
+                })
+            
+            excel_data.append(excel_row)
+        
+        return excel_data

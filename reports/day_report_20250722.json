@@ -1,0 +1,627 @@
+{
+  "report_type": "day_report",
+  "report_date": "2025-07-22",
+  "user_id": 1,
+  "total_trips": 6,
+  "trips": [
+    {
+      "trip_id": 23,
+      "vehicle": "Skoda Octavia 1.6",
+      "start_time": "2025-07-22T00:11:06.786340",
+      "end_time": "2025-07-22T00:34:20.284132",
+      "duration_minutes": 23.224963199999998,
+      "distance_km": 45.0,
+      "fuel_consumption": {
+        "fuel_consumed_liters": 5.4,
+        "trip_fuel_cost": 270.0,
+        "average_price_per_liter": 50.0,
+        "fuel_after_liters": 8.18500000000001,
+        "vehicle": "Skoda Octavia 1.6"
+      },
+      "project_totals": {
+        "Iq Pizza + ХоХейй": {
+          "project_id": 17,
+          "time_minutes": 0.3333333333333333,
+          "distance_km": 23.333333333333336,
+          "fuel_consumed_liters": 2.8000000000000007,
+          "fuel_cost": 140.00000000000003,
+          "time_cost": 1.0388888888888888,
+          "activities_summary": [
+            "Поездка до Iq Pizza + ХоХейй: 00:13-00:13 (0мин, 5.0 км)",
+            "Поездка до Iq Pizza + ХоХейй: 00:15-00:15 (0мин, 5.0 км)",
+            "Поездка до Iq Pizza + ХоХейй: 00:15-00:15 (0мин, 5.0 км)",
+            "Поездка до Iq Pizza + ХоХейй: 00:16-00:17 (0мин, 5.0 км)",
+            "Поездка до дома (доля): 00:28-00:29 (0мин, 1.7 км)",
+            "Поездка до дома (доля): 00:33-00:34 (0мин, 1.7 км)"
+          ],
+          "crm_metadata": {
+            "source": "remonline",
+            "crm_id": 48636619,
+            "id_label": "A015",
+            "status_name": "Сервіс",
+            "status_id": 3874996,
+            "created_at": "2024-07-23T15:55:36Z"
+          }
+        },
+        "Iq Pizza Бориспіль, вул. Голубівка 4": {
+          "project_id": 9,
+          "time_minutes": 0.3333333333333333,
+          "distance_km": 8.333333333333334,
+          "fuel_consumed_liters": 1.0000000000000002,
+          "fuel_cost": 50.00000000000001,
+          "time_cost": 1.0388888888888888,
+          "activities_summary": [
+            "Поездка до Iq Pizza Бориспіль, вул. Голубівка 4: 00:16-00:16 (0мин, 5.0 км)",
+            "Поездка до дома (доля): 00:28-00:29 (0мин, 1.7 км)",
+            "Поездка до дома (доля): 00:33-00:34 (0мин, 1.7 км)"
+          ],
+          "crm_metadata": {
+            "source": "remonline",
+            "crm_id": 54375756,
+            "id_label": "A055",
+            "status_name": "В роботі",
+            "status_id": 2974853,
+            "created_at": "2025-07-07T11:00:38Z"
+          }
+        },
+        "Iq Pizza Київ вул. Клавдіївська 34": {
+          "project_id": 8,
+          "time_minutes": 0.3333333333333333,
+          "distance_km": 13.333333333333332,
+          "fuel_consumed_liters": 1.6,
+          "fuel_cost": 80.00000000000001,
+          "time_cost": 1.0388888888888888,
+          "activities_summary": [
+            "Поездка до Iq Pizza Київ вул. Клавдіївська 34: 00:27-00:28 (0мин, 5.0 км)",
+            "Поездка до Iq Pizza Київ вул. Клавдіївська 34: 00:29-00:29 (0мин, 5.0 км)",
+            "Поездка до дома (доля): 00:28-00:29 (0мин, 1.7 км)",
+            "Поездка до дома (доля): 00:33-00:34 (0мин, 1.7 км)"
+          ],
+          "crm_metadata": {
+            "source": "remonline",
+            "crm_id": 54375639,
+            "id_label": "A054",
+            "status_name": "В роботі",
+            "status_id": 2974853,
+            "created_at": "2025-07-07T10:58:41Z"
+          }
+        }
+      },
+      "activities": [],
+      "trips": [
+        {
+          "id": 75,
+          "project_id": 17,
+          "project_name": "Iq Pizza + ХоХейй",
+          "start_location": "",
+          "end_location": "Iq Pizza + ХоХейй",
+          "start_time": "2025-07-22T00:13:15.248146",
+          "end_time": "2025-07-22T00:13:51.355542",
+          "distance_km": 5.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 76,
+          "project_id": 17,
+          "project_name": "Iq Pizza + ХоХейй",
+          "start_location": "Iq Pizza + ХоХейй",
+          "end_location": "Iq Pizza + ХоХейй",
+          "start_time": "2025-07-22T00:15:07.783294",
+          "end_time": "2025-07-22T00:15:13.746618",
+          "distance_km": 5.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 77,
+          "project_id": 17,
+          "project_name": "Iq Pizza + ХоХейй",
+          "start_location": "Iq Pizza + ХоХейй",
+          "end_location": "Iq Pizza + ХоХейй",
+          "start_time": "2025-07-22T00:15:47.089770",
+          "end_time": "2025-07-22T00:15:53.971048",
+          "distance_km": 5.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 78,
+          "project_id": 9,
+          "project_name": "Iq Pizza Бориспіль, вул. Голубівка 4",
+          "start_location": "Iq Pizza + ХоХейй",
+          "end_location": "Iq Pizza Бориспіль, вул. Голубівка 4",
+          "start_time": "2025-07-22T00:16:18.204537",
+          "end_time": "2025-07-22T00:16:29.163452",
+          "distance_km": 5.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 79,
+          "project_id": 17,
+          "project_name": "Iq Pizza + ХоХейй",
+          "start_location": "Iq Pizza Бориспіль, вул. Голубівка 4",
+          "end_location": "Iq Pizza + ХоХейй",
+          "start_time": "2025-07-22T00:16:43.021659",
+          "end_time": "2025-07-22T00:17:19.662757",
+          "distance_km": 5.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 80,
+          "project_id": 8,
+          "project_name": "Iq Pizza Київ вул. Клавдіївська 34",
+          "start_location": "Iq Pizza + ХоХейй",
+          "end_location": "Iq Pizza Київ вул. Клавдіївська 34",
+          "start_time": "2025-07-22T00:27:40.080144",
+          "end_time": "2025-07-22T00:28:28.037699",
+          "distance_km": 5.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 81,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "Iq Pizza Київ вул. Клавдіївська 34",
+          "end_location": "Дом",
+          "start_time": "2025-07-22T00:28:47.341692",
+          "end_time": "2025-07-22T00:29:26.653341",
+          "distance_km": 5.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 82,
+          "project_id": 8,
+          "project_name": "Iq Pizza Київ вул. Клавдіївська 34",
+          "start_location": "Дом",
+          "end_location": "Iq Pizza Київ вул. Клавдіївська 34",
+          "start_time": "2025-07-22T00:29:37.491319",
+          "end_time": "2025-07-22T00:29:42.180488",
+          "distance_km": 5.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 83,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "Iq Pizza Київ вул. Клавдіївська 34",
+          "end_location": "Дом",
+          "start_time": "2025-07-22T00:33:07.804722",
+          "end_time": "2025-07-22T00:34:08.295606",
+          "distance_km": 5.0,
+          "duration_minutes": 1
+        }
+      ],
+      "shopping_sessions": [],
+      "idle_times": []
+    },
+    {
+      "trip_id": 24,
+      "vehicle": "Fiat Ducato 2.3D",
+      "start_time": "2025-07-22T00:48:43.178808",
+      "end_time": "2025-07-22T00:49:36.671325",
+      "duration_minutes": 0.89154195,
+      "distance_km": 60.0,
+      "fuel_consumption": {
+        "fuel_consumed_liters": 6.0,
+        "trip_fuel_cost": 300.0,
+        "average_price_per_liter": 50.0,
+        "fuel_after_liters": 8.5,
+        "vehicle": "Fiat Ducato 2.3D"
+      },
+      "project_totals": {
+        "Iq Pizza + ХоХейй": {
+          "project_id": 17,
+          "time_minutes": 0.0,
+          "distance_km": 60.0,
+          "fuel_consumed_liters": 6.0,
+          "fuel_cost": 300.0,
+          "time_cost": 0.0,
+          "activities_summary": [
+            "Поездка до Iq Pizza + ХоХейй: 00:48-00:49 (0мин, 10.0 км)",
+            "Поездка до дома (доля): 00:49-00:49 (0мин, 50.0 км)"
+          ],
+          "crm_metadata": {
+            "source": "remonline",
+            "crm_id": 48636619,
+            "id_label": "A015",
+            "status_name": "Сервіс",
+            "status_id": 3874996,
+            "created_at": "2024-07-23T15:55:36Z"
+          }
+        }
+      },
+      "activities": [],
+      "trips": [
+        {
+          "id": 84,
+          "project_id": 17,
+          "project_name": "Iq Pizza + ХоХейй",
+          "start_location": "Дом",
+          "end_location": "Iq Pizza + ХоХейй",
+          "start_time": "2025-07-22T00:48:52.608834",
+          "end_time": "2025-07-22T00:49:01.622675",
+          "distance_km": 10.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 85,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "Iq Pizza + ХоХейй",
+          "end_location": "Дом",
+          "start_time": "2025-07-22T00:49:15.248429",
+          "end_time": "2025-07-22T00:49:20.386748",
+          "distance_km": 50.0,
+          "duration_minutes": 0
+        }
+      ],
+      "shopping_sessions": [],
+      "idle_times": []
+    },
+    {
+      "trip_id": 25,
+      "vehicle": "Skoda Octavia 1.6",
+      "start_time": "2025-07-22T12:34:46.368298",
+      "end_time": "2025-07-22T12:35:22.881867",
+      "duration_minutes": 0.6085594833333333,
+      "distance_km": 20.0,
+      "fuel_consumption": {
+        "fuel_consumed_liters": 2.4000000000000004,
+        "trip_fuel_cost": 120.00000000000001,
+        "average_price_per_liter": 50.0,
+        "fuel_after_liters": 8.18500000000001,
+        "vehicle": "Skoda Octavia 1.6"
+      },
+      "project_totals": {
+        "Iq Pizza + ХоХейй": {
+          "project_id": 17,
+          "time_minutes": 0.0,
+          "distance_km": 20.0,
+          "fuel_consumed_liters": 2.4000000000000004,
+          "fuel_cost": 120.00000000000001,
+          "time_cost": 0.0,
+          "activities_summary": [
+            "Поездка до Iq Pizza + ХоХейй: 12:34-12:35 (0мин, 10.0 км)",
+            "Поездка до дома (доля): 12:35-12:35 (0мин, 10.0 км)"
+          ],
+          "crm_metadata": {
+            "source": "remonline",
+            "crm_id": 48636619,
+            "id_label": "A015",
+            "status_name": "Сервіс",
+            "status_id": 3874996,
+            "created_at": "2024-07-23T15:55:36Z"
+          }
+        }
+      },
+      "activities": [],
+      "trips": [
+        {
+          "id": 86,
+          "project_id": 17,
+          "project_name": "Iq Pizza + ХоХейй",
+          "start_location": "Дом",
+          "end_location": "Iq Pizza + ХоХейй",
+          "start_time": "2025-07-22T12:34:52.359609",
+          "end_time": "2025-07-22T12:35:04.720480",
+          "distance_km": 10.0,
+          "duration_minutes": 0
+        },
+        {
+          "id": 87,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "Iq Pizza + ХоХейй",
+          "end_location": "Дом",
+          "start_time": "2025-07-22T12:35:14.288283",
+          "end_time": "2025-07-22T12:35:19.681643",
+          "distance_km": 10.0,
+          "duration_minutes": 0
+        }
+      ],
+      "shopping_sessions": [],
+      "idle_times": []
+    },
+    {
+      "trip_id": 26,
+      "vehicle": "Skoda Octavia 1.6",
+      "start_time": "2025-07-22T13:00:57.069785",
+      "end_time": "2025-07-22T13:01:02.791014",
+      "duration_minutes": 0.09535381666666667,
+      "distance_km": 0,
+      "fuel_consumption": {},
+      "project_totals": {},
+      "activities": [],
+      "trips": [],
+      "shopping_sessions": [],
+      "idle_times": []
+    },
+    {
+      "trip_id": 27,
+      "vehicle": "Skoda Octavia 1.6",
+      "start_time": "2025-07-22T13:27:08.852528",
+      "end_time": "2025-07-22T13:27:31.598996",
+      "duration_minutes": 0.3791078,
+      "distance_km": 10.0,
+      "fuel_consumption": {
+        "fuel_consumed_liters": 1.2000000000000002,
+        "trip_fuel_cost": 60.00000000000001,
+        "average_price_per_liter": 50.0,
+        "fuel_after_liters": 8.18500000000001,
+        "vehicle": "Skoda Octavia 1.6"
+      },
+      "project_totals": {
+        "Дом": {
+          "project_id": 6,
+          "time_minutes": 0.0,
+          "distance_km": 0.0,
+          "fuel_consumed_liters": 0.0,
+          "fuel_cost": 0.0,
+          "time_cost": 0.0,
+          "activities_summary": [
+            "Простой: 13:27-13:27 (0мин)"
+          ],
+          "crm_metadata": {
+            "source": "static"
+          }
+        }
+      },
+      "activities": [],
+      "trips": [
+        {
+          "id": 88,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "Дом",
+          "end_location": "Дом",
+          "start_time": "2025-07-22T13:27:13.473059",
+          "end_time": "2025-07-22T13:27:22.171509",
+          "distance_km": 10.0,
+          "duration_minutes": 0
+        }
+      ],
+      "shopping_sessions": [],
+      "idle_times": [
+        {
+          "id": 9,
+          "project_ids": [
+            6
+          ],
+          "project_names": [
+            "Дом"
+          ],
+          "start_time": "2025-07-22T13:27:24.565519",
+          "end_time": "2025-07-22T13:27:29.752655",
+          "duration_minutes": 0
+        }
+      ]
+    },
+    {
+      "trip_id": 28,
+      "vehicle": "Honda Civic 1.4}",
+      "start_time": "2025-07-22T13:36:16.803303",
+      "end_time": "2025-07-22T13:36:29.353716",
+      "duration_minutes": 0.20917355,
+      "distance_km": 10.0,
+      "fuel_consumption": {
+        "fuel_consumed_liters": 0.8500000000000001,
+        "trip_fuel_cost": 47.22222222222223,
+        "average_price_per_liter": 55.55555555555556,
+        "fuel_after_liters": 44.15,
+        "vehicle": "Honda Civic 1.4}"
+      },
+      "project_totals": {},
+      "activities": [],
+      "trips": [
+        {
+          "id": 89,
+          "project_id": null,
+          "project_name": null,
+          "start_location": "Дом",
+          "end_location": "Дом",
+          "start_time": "2025-07-22T13:36:21.166053",
+          "end_time": "2025-07-22T13:36:25.221431",
+          "distance_km": 10.0,
+          "duration_minutes": 0
+        }
+      ],
+      "shopping_sessions": [],
+      "idle_times": []
+    }
+  ],
+  "totals": {
+    "total_time_minutes": 25.408699799999997,
+    "total_distance_km": 145.0,
+    "total_idle_time_minutes": 0,
+    "project_totals": {
+      "Iq Pizza + ХоХейй": {
+        "project_id": 17,
+        "time_minutes": 0.3333333333333333,
+        "distance_km": 103.33333333333334,
+        "fuel_consumed_liters": 11.200000000000001,
+        "fuel_cost": 560.0,
+        "time_cost": 1.0388888888888888,
+        "activities_summary": [
+          "Поездка до Iq Pizza + ХоХейй: 00:13-00:13 (0мин, 5.0 км)",
+          "Поездка до Iq Pizza + ХоХейй: 00:15-00:15 (0мин, 5.0 км)",
+          "Поездка до Iq Pizza + ХоХейй: 00:15-00:15 (0мин, 5.0 км)",
+          "Поездка до Iq Pizza + ХоХейй: 00:16-00:17 (0мин, 5.0 км)",
+          "Поездка до дома (доля): 00:28-00:29 (0мин, 1.7 км)",
+          "Поездка до дома (доля): 00:33-00:34 (0мин, 1.7 км)",
+          "Поездка до Iq Pizza + ХоХейй: 00:48-00:49 (0мин, 10.0 км)",
+          "Поездка до дома (доля): 00:49-00:49 (0мин, 50.0 км)",
+          "Поездка до Iq Pizza + ХоХейй: 12:34-12:35 (0мин, 10.0 км)",
+          "Поездка до дома (доля): 12:35-12:35 (0мин, 10.0 км)"
+        ],
+        "crm_metadata": {
+          "source": "remonline",
+          "crm_id": 48636619,
+          "id_label": "A015",
+          "status_name": "Сервіс",
+          "status_id": 3874996,
+          "created_at": "2024-07-23T15:55:36Z"
+        }
+      },
+      "Iq Pizza Бориспіль, вул. Голубівка 4": {
+        "project_id": 9,
+        "time_minutes": 0.3333333333333333,
+        "distance_km": 8.333333333333334,
+        "fuel_consumed_liters": 1.0000000000000002,
+        "fuel_cost": 50.00000000000001,
+        "time_cost": 1.0388888888888888,
+        "activities_summary": [
+          "Поездка до Iq Pizza Бориспіль, вул. Голубівка 4: 00:16-00:16 (0мин, 5.0 км)",
+          "Поездка до дома (доля): 00:28-00:29 (0мин, 1.7 км)",
+          "Поездка до дома (доля): 00:33-00:34 (0мин, 1.7 км)"
+        ],
+        "crm_metadata": {
+          "source": "remonline",
+          "crm_id": 54375756,
+          "id_label": "A055",
+          "status_name": "В роботі",
+          "status_id": 2974853,
+          "created_at": "2025-07-07T11:00:38Z"
+        }
+      },
+      "Iq Pizza Київ вул. Клавдіївська 34": {
+        "project_id": 8,
+        "time_minutes": 0.3333333333333333,
+        "distance_km": 13.333333333333332,
+        "fuel_consumed_liters": 1.6,
+        "fuel_cost": 80.00000000000001,
+        "time_cost": 1.0388888888888888,
+        "activities_summary": [
+          "Поездка до Iq Pizza Київ вул. Клавдіївська 34: 00:27-00:28 (0мин, 5.0 км)",
+          "Поездка до Iq Pizza Київ вул. Клавдіївська 34: 00:29-00:29 (0мин, 5.0 км)",
+          "Поездка до дома (доля): 00:28-00:29 (0мин, 1.7 км)",
+          "Поездка до дома (доля): 00:33-00:34 (0мин, 1.7 км)"
+        ],
+        "crm_metadata": {
+          "source": "remonline",
+          "crm_id": 54375639,
+          "id_label": "A054",
+          "status_name": "В роботі",
+          "status_id": 2974853,
+          "created_at": "2025-07-07T10:58:41Z"
+        }
+      },
+      "Дом": {
+        "project_id": 6,
+        "time_minutes": 0.0,
+        "distance_km": 0.0,
+        "fuel_consumed_liters": 0.0,
+        "fuel_cost": 0.0,
+        "time_cost": 0.0,
+        "activities_summary": [
+          "Простой: 13:27-13:27 (0мин)"
+        ],
+        "crm_metadata": {
+          "source": "static"
+        }
+      }
+    },
+    "vehicle_totals": {
+      "Skoda Octavia 1.6": {
+        "time_minutes": 24.307984299999998,
+        "distance_km": 75.0,
+        "trips_count": 4
+      },
+      "Fiat Ducato 2.3D": {
+        "time_minutes": 0.89154195,
+        "distance_km": 60.0,
+        "trips_count": 1
+      },
+      "Honda Civic 1.4}": {
+        "time_minutes": 0.20917355,
+        "distance_km": 10.0,
+        "trips_count": 1
+      }
+    },
+    "fuel_consumption_by_vehicle": {
+      "Skoda Octavia 1.6": {
+        "fuel_consumed_liters": 9.0,
+        "total_fuel_cost": 450.0,
+        "total_distance": 75.0,
+        "fuel_after_liters": 8.18500000000001
+      },
+      "Fiat Ducato 2.3D": {
+        "fuel_consumed_liters": 6.0,
+        "total_fuel_cost": 300.0,
+        "total_distance": 60.0,
+        "fuel_after_liters": 8.5
+      },
+      "Honda Civic 1.4}": {
+        "fuel_consumed_liters": 0.8500000000000001,
+        "total_fuel_cost": 47.22222222222223,
+        "total_distance": 10.0,
+        "fuel_after_liters": 44.15
+      }
+    }
+  },
+  "for_excel": [
+    {
+      "object_name": "Iq Pizza + ХоХейй",
+      "remonline_id": 48636619,
+      "status": "Сервіс",
+      "total_fuel_cost": 560.0,
+      "vehicles": [
+        {
+          "vehicle": "Skoda Octavia 1.6",
+          "time_minutes": 0.3333333333333333,
+          "time_cost": 1.0388888888888888,
+          "fuel_cost": 260.00000000000006
+        },
+        {
+          "vehicle": "Fiat Ducato 2.3D",
+          "time_minutes": 0.0,
+          "time_cost": 0.0,
+          "fuel_cost": 300.0
+        }
+      ],
+      "total_costs": 561.0388888888889
+    },
+    {
+      "object_name": "Iq Pizza Бориспіль, вул. Голубівка 4",
+      "remonline_id": 54375756,
+      "status": "В роботі",
+      "total_fuel_cost": 50.00000000000001,
+      "vehicles": [
+        {
+          "vehicle": "Skoda Octavia 1.6",
+          "time_minutes": 0.3333333333333333,
+          "time_cost": 1.0388888888888888,
+          "fuel_cost": 50.00000000000001
+        }
+      ],
+      "total_costs": 51.0388888888889
+    },
+    {
+      "object_name": "Iq Pizza Київ вул. Клавдіївська 34",
+      "remonline_id": 54375639,
+      "status": "В роботі",
+      "total_fuel_cost": 80.00000000000001,
+      "vehicles": [
+        {
+          "vehicle": "Skoda Octavia 1.6",
+          "time_minutes": 0.3333333333333333,
+          "time_cost": 1.0388888888888888,
+          "fuel_cost": 80.00000000000001
+        }
+      ],
+      "total_costs": 81.0388888888889
+    },
+    {
+      "object_name": "Дом",
+      "remonline_id": "",
+      "status": "",
+      "total_fuel_cost": 0.0,
+      "vehicles": [
+        {
+          "vehicle": "Skoda Octavia 1.6",
+          "time_minutes": 0.0,
+          "time_cost": 0.0,
+          "fuel_cost": 0.0
+        }
+      ],
+      "total_costs": 0.0
+    }
+  ]
+}
